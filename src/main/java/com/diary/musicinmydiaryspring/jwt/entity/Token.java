@@ -33,8 +33,13 @@ public class Token {
     public static Token of(Member member, Jwt jwt){
         return Token.builder()
                 .member(member)
+                .tokenType(TokenType.BEARER)
                 .refreshToken(jwt.getRefreshToken())
                 .expiration(jwt.getRefreshTokenExpriation())
                 .build();
+    }
+
+    public enum TokenType {
+        BEARER
     }
 }
