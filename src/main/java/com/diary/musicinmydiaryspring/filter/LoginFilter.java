@@ -1,4 +1,4 @@
-package com.diary.musicinmydiaryspring.auth.filter;
+package com.diary.musicinmydiaryspring.filter;
 
 import com.diary.musicinmydiaryspring.jwt.service.JwtService;
 import com.diary.musicinmydiaryspring.member.entity.Member;
