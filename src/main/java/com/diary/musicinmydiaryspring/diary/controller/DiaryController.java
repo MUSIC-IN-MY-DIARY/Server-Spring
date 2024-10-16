@@ -22,7 +22,7 @@ public class DiaryController {
     private final DiaryService diaryservice;
 
     @SneakyThrows
-    @PostMapping("/{memebrId}/diary")
+    @PostMapping("/{memberId}/diary")
     public ResponseEntity<DiaryResponseDto> writeDiary(
             @PathVariable Long memberId,
             @Validated @RequestBody DiaryRequestDto diaryRequestDto
