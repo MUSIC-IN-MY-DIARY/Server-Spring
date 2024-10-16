@@ -37,7 +37,6 @@ public class JwtProvider {
      */
     @PostConstruct
     public void setSecretKey(){
-        log.info("서명에 쓸 시크릿 키: "+signature);
         secret = signature.getBytes();
         key = Keys.hmacShaKeyFor(secret);
     }
@@ -57,10 +56,10 @@ public class JwtProvider {
                     .signWith(key)
                     .compact();
 
-            log.info("!!! jwt : "+jwt);
+            log.info("발급된 jwt : "+jwt);
             return jwt;
         } catch (Exception e){
-            log.debug("Failed to create JWT: " + e.getMessage());
+            log.debug("jwt 생성 실패: " + e.getMessage());
             throw e;
         }
 
