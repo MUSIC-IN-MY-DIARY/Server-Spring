@@ -140,7 +140,7 @@ public class JwtProvider {
      * @param userDetails - 검증에 사용할 사용자 정보
      * @return 토큰의 유효 여부 (true/false)
      */
-    public boolean vaildToken(String token, UserDetails userDetails){
+    public boolean validToken(String token, UserDetails userDetails){
         try{
             Claims claims = getClaims(token);
             String email = claims.getSubject();
