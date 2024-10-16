@@ -1,4 +1,4 @@
-package com.diary.musicinmydiaryspring.jwt.filter;
+package com.diary.musicinmydiaryspring.filter;
 
 import com.diary.musicinmydiaryspring.auth.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;

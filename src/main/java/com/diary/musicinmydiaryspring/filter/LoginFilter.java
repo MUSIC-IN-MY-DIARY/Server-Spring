@@ -1,4 +1,4 @@
-package com.diary.musicinmydiaryspring.auth.filter;
+package com.diary.musicinmydiaryspring.filter;
 
 import com.diary.musicinmydiaryspring.jwt.service.JwtService;
 import com.diary.musicinmydiaryspring.member.entity.Member;
@@ -60,7 +60,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             Authentication authResult) throws IOException, ServletException
     {
         Member member = (Member) authResult.getPrincipal();
-        Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
+//        Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
 
         Jwt token = jwtService.createTokens(member.getId());
         addJwtToCookie(response, token.getAccessToken(), "accessToken");
