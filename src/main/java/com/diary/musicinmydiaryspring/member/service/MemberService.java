@@ -1,6 +1,6 @@
 package com.diary.musicinmydiaryspring.member.service;
 
-import com.diary.musicinmydiaryspring.member.dto.RegisterRequestDto;
+import com.diary.musicinmydiaryspring.member.dto.SignupDto;
 import com.diary.musicinmydiaryspring.member.entity.Member;
 import com.diary.musicinmydiaryspring.member.repsitory.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Member register(RegisterRequestDto request){
+    public Member register(SignupDto request){
 
         if (!request.getPassword().equals(request.getConfirmPassword())){
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
