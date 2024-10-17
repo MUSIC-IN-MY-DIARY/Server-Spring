@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     private final String[] whiteListUris = new String[]{
-            "/swagger-ui/**", "/v3/**", "/login", "/swagger-ui.html", "/swagger-resources/**", "/signup"
+            "/swagger-ui/**", "/v3/**", "/login", "/swagger-ui.html", "/swagger-resources/**", "/member/signup"
     };
 
     /**
