@@ -24,6 +24,8 @@ public enum BaseResponseStatus {
     REFRESH_TOKEN_MISMATCH(false, HttpStatus.UNAUTHORIZED.value(), "리프레시 토큰이 일치하지 않습니다."),
     TOKEN_SIGNATURE_INVALID(false, HttpStatus.UNAUTHORIZED.value(), "토큰 서명이 유효하지 않습니다."),
 
+    
+
     NOT_FOUND_DIARY(false, HttpStatus.NOT_FOUND.value(), "존재하지 않은 다이어리입니다."),
     NOT_FOUND_DIARY_ID(false, HttpStatus.NOT_FOUND.value(), "존재하지 않은 다이어리 아이디입니다."),
     BAD_REQUEST_DIARY_INPUT(false, HttpStatus.BAD_REQUEST.value(), "입력 데이터가 유효하지 않습니다."),
