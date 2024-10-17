@@ -3,7 +3,7 @@ package com.diary.musicinmydiaryspring.member.dto;
 import lombok.Data;
 
 @Data
-public class RegisterRequestDto {
+public class SignupDto {
     private String username;
     private String password;
     private String confirmPassword;

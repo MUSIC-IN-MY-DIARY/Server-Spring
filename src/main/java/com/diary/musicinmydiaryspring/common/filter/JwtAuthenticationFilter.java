@@ -1,6 +1,6 @@
-package com.diary.musicinmydiaryspring.filter;
+package com.diary.musicinmydiaryspring.common.filter;
 
-import com.diary.musicinmydiaryspring.auth.JwtProvider;
+import com.diary.musicinmydiaryspring.jwt.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 
-import static com.diary.musicinmydiaryspring.auth.utils.RequestParser.*;
+import static com.diary.musicinmydiaryspring.common.utils.RequestParser.*;
 
 @Component
 @RequiredArgsConstructor
