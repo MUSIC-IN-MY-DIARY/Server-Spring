@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MusicInMyDiarySpringApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(MusicInMyDiarySpringApplication.class, args);
     }
 
