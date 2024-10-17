@@ -1,6 +1,6 @@
 package com.diary.musicinmydiaryspring.jwt.service;
 
-import com.diary.musicinmydiaryspring.auth.JwtProvider;
+import com.diary.musicinmydiaryspring.jwt.JwtProvider;
 import com.diary.musicinmydiaryspring.member.repsitory.MemberRepository;
 import com.diary.musicinmydiaryspring.jwt.entity.Token;
 import com.diary.musicinmydiaryspring.jwt.repository.TokenRepository;
