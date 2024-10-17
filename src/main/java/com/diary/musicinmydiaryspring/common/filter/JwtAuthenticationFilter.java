@@ -20,6 +20,7 @@ import java.util.Collections;
 
 import static com.diary.musicinmydiaryspring.common.utils.RequestParser.*;
 
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -42,10 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException
     {
-            if (isWhiteListed(request.getRequestURI())){
-                filterChain.doFilter(request, response);
-                return;
-            }
+        if (isWhiteListed(request.getRequestURI())){
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         String authorizationHeader = request.getHeader(Authorization);
 
