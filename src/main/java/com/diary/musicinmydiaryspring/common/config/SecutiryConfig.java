@@ -1,8 +1,8 @@
-package com.diary.musicinmydiaryspring.config;
+package com.diary.musicinmydiaryspring.common.config;
 
 import com.diary.musicinmydiaryspring.jwt.service.JwtService;
-import com.diary.musicinmydiaryspring.filter.LoginFilter;
-import com.diary.musicinmydiaryspring.filter.JwtAuthenticationFilter;
+import com.diary.musicinmydiaryspring.common.filter.LoginFilter;
+import com.diary.musicinmydiaryspring.common.filter.JwtAuthenticationFilter;
 import com.diary.musicinmydiaryspring.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

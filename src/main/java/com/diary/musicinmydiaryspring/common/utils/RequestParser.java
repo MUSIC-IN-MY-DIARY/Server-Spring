@@ -1,4 +1,4 @@
-package com.diary.musicinmydiaryspring.auth.utils;
+package com.diary.musicinmydiaryspring.common.utils;
 
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;

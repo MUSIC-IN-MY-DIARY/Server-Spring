@@ -1,4 +1,4 @@
-package com.diary.musicinmydiaryspring.config;
+package com.diary.musicinmydiaryspring.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
