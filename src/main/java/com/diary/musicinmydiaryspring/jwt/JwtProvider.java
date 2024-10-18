@@ -2,7 +2,6 @@ package com.diary.musicinmydiaryspring.jwt;
 
 import com.diary.musicinmydiaryspring.member.service.CustomMemberDetailService;
 import io.jsonwebtoken.Claims;
-import com.diary.musicinmydiaryspring.jwt.Jwt;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

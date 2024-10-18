@@ -24,7 +24,7 @@ import java.util.Arrays;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
-public class SecutiryConfig {
+public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtService jwtService;
@@ -37,7 +37,7 @@ public class SecutiryConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(((auth)-> auth.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(getWhiteListUris()).permitAll()
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterAt(
@@ -69,6 +69,6 @@ public class SecutiryConfig {
     }
 
     private String[] getWhiteListUris() {
-        return new String[]{"/swagger-ui/**", "/v3/**", "/login", "/swagger-ui.html", "/swagger-resources/**", "/signup"};
+        return new String[]{"/swagger-ui/**", "/v3/**", "/login", "/swagger-ui.html", "/swagger-resources/**", "/member/signup"};
     }
 }

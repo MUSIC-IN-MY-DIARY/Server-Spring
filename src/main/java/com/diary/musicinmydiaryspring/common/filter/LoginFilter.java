@@ -58,7 +58,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             Authentication authResult) throws IOException, ServletException
     {
         Member member = (Member) authResult.getPrincipal();
-//        Collection<? extends GrantedAuthority> authorities = authResult.getAuthorities();
 
         Jwt token = jwtService.createTokens(member.getId());
         addJwtToCookie(response, token.getAccessToken(), "accessToken");

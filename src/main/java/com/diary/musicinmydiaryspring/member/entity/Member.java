@@ -8,6 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
+
+
 @Entity
 @Table(name="member")
 @Getter
@@ -30,6 +32,7 @@ public class Member implements UserDetails {
 
     @Column
     private String profile;
+
 
     @Builder
     public Member(String email, String password, String nickname, String profile){
