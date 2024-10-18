@@ -1,5 +1,7 @@
 package com.diary.musicinmydiaryspring.diary.controller;
 
+import com.diary.musicinmydiaryspring.common.response.BaseResponse;
+import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryRequestDto;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryResponseDto;
 import com.diary.musicinmydiaryspring.diary.entity.Diary;
@@ -23,17 +25,17 @@ public class DiaryController {
 
     @SneakyThrows
     @PostMapping("/{memberId}/diary")
-    public ResponseEntity<DiaryResponseDto> writeDiary(
+    public BaseResponse<DiaryResponseDto> writeDiary(
             @PathVariable Long memberId,
             @Validated @RequestBody DiaryRequestDto diaryRequestDto
             ){
 
         if (memberId == null || memberId < 0){
-            throw new BadRequestException("해당 멤버가 조회되지 않습니다.");
+            return new BaseResponse<>(BaseResponseStatus.NOT_FOUND_DIARY_ID);
         }
 
         if (diaryRequestDto == null){
-            throw new BadRequestException("일기가 작성되지 않았습니다.");
+            return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_DIARY_INPUT);
         }
 
         Diary diary = diaryservice.wirteDiary(memberId, diaryRequestDto);
@@ -44,6 +46,6 @@ public class DiaryController {
                 .content(diary.getContent())
                 .build();
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(diaryResponseDto);
+        return new BaseResponse<>(diaryResponseDto);
     }
 }
