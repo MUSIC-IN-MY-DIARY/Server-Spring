@@ -1,6 +1,10 @@
 package com.diary.musicinmydiaryspring.diary.service;
 
+import com.diary.musicinmydiaryspring.common.response.BaseResponse;
+import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
+import com.diary.musicinmydiaryspring.common.response.CustomException;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryRequestDto;
+import com.diary.musicinmydiaryspring.diary.dto.DiaryResponseDto;
 import com.diary.musicinmydiaryspring.diary.entity.Diary;
 import com.diary.musicinmydiaryspring.diary.repository.DiaryRepository;
 import com.diary.musicinmydiaryspring.member.entity.Member;
@@ -24,9 +28,9 @@ public class DiaryService {
      * @param diaryRequestDto 일기 Dto
      * */
     @Transactional
-    public Diary wirteDiary(Long memberId, DiaryRequestDto diaryRequestDto) {
+    public BaseResponse<DiaryResponseDto> wirteDiary(Long memberId, DiaryRequestDto diaryRequestDto) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 멤버가 조회되지 않습니다"));
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_MEMBER));
 
 //        Song song = songRepository.findById(diaryRequestDto.getSongId())
 //                .orElseThrow(() -> new EntityNotFoundException("해당 노래가 조회되지 않습니다"));
@@ -35,6 +39,11 @@ public class DiaryService {
                 .member(member)
                 .content(diaryRequestDto.getContent())
                 .build();
-        return diaryRepository.save(diary);
+        diaryRepository.save(diary);
+
+        return new BaseResponse<>(DiaryResponseDto.builder()
+                .nickName(member.getNickname())
+                .content(diaryRequestDto.getContent())
+                .build());
     }
 }
