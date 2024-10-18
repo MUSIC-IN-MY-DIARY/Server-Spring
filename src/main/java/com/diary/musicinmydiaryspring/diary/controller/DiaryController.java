@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 public class DiaryController {
     private final DiaryService diaryservice;
 
-    @SneakyThrows
     @PostMapping("/{memberId}/diary")
     public BaseResponse<DiaryResponseDto> writeDiary(
             @PathVariable Long memberId,
@@ -38,14 +37,6 @@ public class DiaryController {
             return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_DIARY_INPUT);
         }
 
-        Diary diary = diaryservice.wirteDiary(memberId, diaryRequestDto);
-        DiaryResponseDto diaryResponseDto = DiaryResponseDto.builder()
-                .id(diary.getId())
-                .nickName(diary.getMember().getNickname())
-                .createdAt(diary.getCreatedAt())
-                .content(diary.getContent())
-                .build();
-
-        return new BaseResponse<>(diaryResponseDto);
+        return diaryservice.wirteDiary(memberId, diaryRequestDto);
     }
 }
