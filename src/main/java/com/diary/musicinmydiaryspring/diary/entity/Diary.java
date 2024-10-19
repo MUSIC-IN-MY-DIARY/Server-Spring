@@ -21,9 +21,6 @@ public class Diary {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Song song;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     @Column(nullable = false)
@@ -34,9 +31,6 @@ public class Diary {
 
     @Column(nullable = false)
     private String content;
-
-    @Column
-    private String isSaved;
 
     @PrePersist
     public void prePersist(){

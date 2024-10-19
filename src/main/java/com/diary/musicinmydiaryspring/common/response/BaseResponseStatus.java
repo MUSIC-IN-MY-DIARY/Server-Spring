@@ -43,6 +43,8 @@ public enum BaseResponseStatus {
     NOT_FOUND_CHAT_ID(false, HttpStatus.NOT_FOUND.value(), "존재하지 않은 채팅 아이디입니다."),
 
     ALREADY_EXIST_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "이미 사용중인 이메일입니다."),
+    INTERNAL_CLIENT_ERROR(false, HttpStatus.INTERNAL_SERVER_ERROR.value(), "클라이언트 오류가 발생했습니다."),
+
 
     /**
      * 429: 너무 많은 요청

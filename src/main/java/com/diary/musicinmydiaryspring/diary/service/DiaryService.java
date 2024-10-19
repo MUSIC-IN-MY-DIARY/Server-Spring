@@ -15,16 +15,17 @@ import com.diary.musicinmydiaryspring.song.entity.Song;
 import com.diary.musicinmydiaryspring.song.repository.SongRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 public class DiaryService {
     private final DiaryRepository diaryRepository;
     private final MemberRepository memberRepository;
-    private final SongRepository songRepository;
     private final WebClient webClient;
 
     /**
@@ -50,16 +51,21 @@ public class DiaryService {
     }
 
     /**
-     *
+     * FastAPI에게 응답을 요청하는 메서드
+     * @param songRequestDto
      * */
     @Transactional
-    public BaseResponse<SongResponseDto> sendDiaryAndGetChat(SongRequestDto songRequestDto){
+    public BaseResponse<SongResponseDto> getChat(SongRequestDto songRequestDto){
         SongResponseDto songResponseDto =  webClient.post()
-                        .uri("/dashboard/chat")
-                        .bodyValue(songRequestDto)
-                        .retrieve()
-                        .bodyToMono(SongResponseDto.class)
-                        .block();
+                .uri("/dashboard/chat")
+                .bodyValue(songRequestDto)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError,
+                        clientResponse -> Mono.error(new CustomException(BaseResponseStatus.INTERNAL_CLIENT_ERROR)))
+                .onStatus(HttpStatusCode::is5xxServerError,
+                        clientResponse -> Mono.error(new CustomException(BaseResponseStatus.INTERNAL_SERVER_ERROR)))
+                .bodyToMono(SongResponseDto.class)
+                .block();
 
         return new BaseResponse<>(songResponseDto);
     }
