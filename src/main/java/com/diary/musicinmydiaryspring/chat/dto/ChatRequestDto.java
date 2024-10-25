@@ -9,6 +9,9 @@ public class ChatRequestDto {
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("chat_response")
-    private String response;
+    @JsonProperty("song_id")
+    private Long songId;
+
+    @JsonProperty("diary_content")
+    private String diaryContent;
 }

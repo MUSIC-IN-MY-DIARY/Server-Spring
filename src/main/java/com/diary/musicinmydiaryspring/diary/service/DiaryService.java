@@ -1,5 +1,7 @@
 package com.diary.musicinmydiaryspring.diary.service;
 
+import com.diary.musicinmydiaryspring.chat.dto.ChatRequestDto;
+import com.diary.musicinmydiaryspring.chat.dto.ChatResponseDto;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.common.response.CustomException;
@@ -50,14 +52,14 @@ public class DiaryService {
 
     /**
      * FastAPI에게 응답을 요청하는 메서드
-     * @param songRequestDto
+     * @param chatRequestDto
      * */
-    public BaseResponse<SongResponseDto> getChat(SongRequestDto songRequestDto){
+    public BaseResponse<ChatResponseDto> getChat(ChatRequestDto chatRequestDto){
         String url = "http://localhost:8000/chat";
 
-        ResponseEntity<SongResponseDto> songResponseDto = restClient.post()
+        ResponseEntity<ChatResponseDto> chatResponseDto = restClient.post()
                 .uri(url)
-                .body(songRequestDto)
+                .body(chatRequestDto)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
                     throw new CustomException(BaseResponseStatus.INTERNAL_CLIENT_ERROR);
@@ -65,10 +67,13 @@ public class DiaryService {
                 .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
                     throw new CustomException(BaseResponseStatus.SERVER_ERROR);
                 })
-                .toEntity(SongResponseDto.class);
+                .toEntity(ChatResponseDto.class);
 
-        return new BaseResponse<>(songResponseDto.getBody());
+        return new BaseResponse<>(chatResponseDto.getBody());
     }
 
-
+    /**
+     * 사용자에게 챗봇 응답을 전달하는 메서드
+     * return
+     * */
 }

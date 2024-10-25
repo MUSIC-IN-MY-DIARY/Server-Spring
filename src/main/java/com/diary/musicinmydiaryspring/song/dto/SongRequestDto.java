@@ -9,6 +9,8 @@ public class SongRequestDto {
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("diary")
-    private DiaryResponseDto diaryResponseDto;
+    @JsonProperty("album_id")
+    private Long albumId;
+
+
 }
