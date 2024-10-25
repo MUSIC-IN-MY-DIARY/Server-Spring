@@ -14,8 +14,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 
 @Slf4j
@@ -28,14 +31,14 @@ public class DiaryController {
     @PostMapping("/write")
     public BaseResponse<DiaryResponseDto> writeDiary(
             @Validated @RequestBody DiaryRequestDto diaryRequestDto,
-            HttpServletRequest request
-    ){
+            @AuthenticationPrincipal Principal principal
+            ){
 
         if (diaryRequestDto == null){
-            return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_DIARY_INPUT);
+            return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_INPUT);
         }
-        String email = RequestParser.extractEmail(request);
+        String email = principal.getName();
+
         return diaryservice.wirteDiary(diaryRequestDto, email);
     }
-
 }

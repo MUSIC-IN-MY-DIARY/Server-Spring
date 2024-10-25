@@ -40,4 +40,5 @@ public class BaseResponse<T> {
         this.message = status.getMessage();
         this.result = null;
     }
+
 }

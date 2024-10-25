@@ -23,7 +23,7 @@ public class Diary {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
     @Column
@@ -31,9 +31,4 @@ public class Diary {
 
     @Column(nullable = false)
     private String content;
-
-    @PrePersist
-    public void prePersist(){
-        this.createdAt = (this.createdAt == null) ? LocalDateTime.now() : this.createdAt;
-    }
 }
