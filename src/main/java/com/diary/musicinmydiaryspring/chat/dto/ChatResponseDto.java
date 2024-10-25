@@ -9,8 +9,8 @@ public class ChatResponseDto {
     @JsonProperty("id")
     private Long id;
 
-    @JsonProperty("song")
-    private SongDto song;
+//    @JsonProperty("song")
+//    private SongDto song;
 
     @JsonProperty("chat_response")
     private String response;

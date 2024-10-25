@@ -11,9 +11,6 @@ import com.diary.musicinmydiaryspring.member.entity.Member;
 import com.diary.musicinmydiaryspring.member.repsitory.MemberRepository;
 import com.diary.musicinmydiaryspring.song.dto.SongRequestDto;
 import com.diary.musicinmydiaryspring.song.dto.SongResponseDto;
-import com.diary.musicinmydiaryspring.song.entity.Song;
-import com.diary.musicinmydiaryspring.song.repository.SongRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -30,12 +27,13 @@ public class DiaryService {
 
     /**
      * 멤버 아이디로 일기 작성
-     * @param memberId 멤버 아이디
+     *
      * @param diaryRequestDto 일기 Dto
-     * */
+     * @param email
+     */
     @Transactional
-    public BaseResponse<DiaryResponseDto> wirteDiary(Long memberId, DiaryRequestDto diaryRequestDto) {
-        Member member = memberRepository.findById(memberId)
+    public BaseResponse<DiaryResponseDto> wirteDiary(DiaryRequestDto diaryRequestDto, String email) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_MEMBER));
 
         Diary diary = Diary.builder()
