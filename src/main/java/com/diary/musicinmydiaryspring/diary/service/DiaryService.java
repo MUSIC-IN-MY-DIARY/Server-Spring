@@ -13,17 +13,17 @@ import com.diary.musicinmydiaryspring.song.dto.SongRequestDto;
 import com.diary.musicinmydiaryspring.song.dto.SongResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
 @Service
 @RequiredArgsConstructor
 public class DiaryService {
     private final DiaryRepository diaryRepository;
     private final MemberRepository memberRepository;
-    private final WebClient webClient;
+    private final RestClient restClient;
 
     /**
      * 멤버 아이디로 일기 작성
@@ -52,20 +52,23 @@ public class DiaryService {
      * FastAPI에게 응답을 요청하는 메서드
      * @param songRequestDto
      * */
-    @Transactional
     public BaseResponse<SongResponseDto> getChat(SongRequestDto songRequestDto){
-        SongResponseDto songResponseDto =  webClient.post()
-                .uri("/dashboard/chat")
-                .bodyValue(songRequestDto)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError,
-                        clientResponse -> Mono.error(new CustomException(BaseResponseStatus.INTERNAL_CLIENT_ERROR)))
-                .onStatus(HttpStatusCode::is5xxServerError,
-                        clientResponse -> Mono.error(new CustomException(BaseResponseStatus.INTERNAL_SERVER_ERROR)))
-                .bodyToMono(SongResponseDto.class)
-                .block();
+        String url = "http://localhost:8000/chat";
 
-        return new BaseResponse<>(songResponseDto);
+        ResponseEntity<SongResponseDto> songResponseDto = restClient.post()
+                .uri(url)
+                .body(songRequestDto)
+                .retrieve()
+                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
+                    throw new CustomException(BaseResponseStatus.INTERNAL_CLIENT_ERROR);
+                })
+                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
+                    throw new CustomException(BaseResponseStatus.SERVER_ERROR);
+                })
+                .toEntity(SongResponseDto.class);
+
+        return new BaseResponse<>(songResponseDto.getBody());
     }
+
 
 }
