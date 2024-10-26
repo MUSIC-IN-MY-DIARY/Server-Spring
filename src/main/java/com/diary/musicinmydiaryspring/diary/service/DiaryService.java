@@ -6,6 +6,7 @@ import com.diary.musicinmydiaryspring.chat.service.ChatService;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.common.response.CustomException;
+import com.diary.musicinmydiaryspring.diary.dto.DiaryListResponseDto;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryRequestDto;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryResponseDto;
 import com.diary.musicinmydiaryspring.diary.entity.Diary;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -59,4 +62,28 @@ public class DiaryService {
                 .build());
     }
 
+
+    public BaseResponse<List<DiaryListResponseDto>> getAllDiaries(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_MEMBER));
+
+        List<Diary> diaryList = diaryRepository.findAllByMemberId(member.getId())
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_DIARY));
+
+        List<DiaryListResponseDto> response = new ArrayList<>();
+
+
+        for (Diary diary : diaryList) {
+            DiaryListResponseDto dto = DiaryListResponseDto.builder()
+                    .diaryId(diary.getId())
+                    .createdAt(diary.getCreatedAt())
+                    .updatedAt(diary.getUpdatedAt())
+                    .content(diary.getContent())
+                    .build();
+
+            response.add(dto);
+        }
+
+        return new BaseResponse<>(response);
+    }
 }

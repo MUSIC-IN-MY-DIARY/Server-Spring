@@ -1,19 +1,18 @@
 package com.diary.musicinmydiaryspring.diary.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Data
 @Builder
-public class DiaryResponseDto {
+@Data
+@AllArgsConstructor
+public class DiaryListResponseDto {
     @JsonProperty("diary_id")
-    private Long id;
-
-    @JsonProperty("nickname")
-    private String nickName;
+    private Long diaryId;
 
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
@@ -23,7 +22,4 @@ public class DiaryResponseDto {
 
     @JsonProperty("diary_content")
     private String content;
-
-    @JsonProperty("chat_response")
-    private String chatResponse;
 }
