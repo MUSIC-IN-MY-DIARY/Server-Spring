@@ -1,9 +1,11 @@
 package com.diary.musicinmydiaryspring.song.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+@AllArgsConstructor
 @Builder
 @Entity
 @Data
@@ -27,12 +29,4 @@ public class Song {
 
     @Column(nullable = false)
     private String genre;
-
-    public Song(String albumTitle, String artist, String songTitle, String lyrics, String genre){
-        this.albumTitle = albumTitle;
-        this.artist = artist;
-        this.songTitle = songTitle;
-        this.lyrics = lyrics;
-        this.genre = genre;
-    }
 }
