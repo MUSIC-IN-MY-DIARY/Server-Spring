@@ -89,8 +89,8 @@ public class ChatService {
 
         return new BaseResponse<>(ChatResponseDto.builder()
                 .id(chat.getId())
-                .createdAt(chat.getCreatedAt())
-                .chatResponse(chat.getChatResponse())
+                .createdAt(chat.getCreatedAt() != null ? chat.getCreatedAt() : LocalDateTime.now())
+                .chatResponse(chat.getChatResponse() != null ? chat.getChatResponse() : "")
                 .isLiked(true)
                 .build());
     }

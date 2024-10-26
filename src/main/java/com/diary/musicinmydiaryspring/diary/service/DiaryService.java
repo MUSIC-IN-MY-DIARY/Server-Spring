@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class DiaryService {
@@ -49,10 +51,10 @@ public class DiaryService {
         ChatResponseDto chatResult = chatResponse.getResult();
 
         return new BaseResponse<>(DiaryResponseDto.builder()
-                .nickName(member.getNickname())
-                .createdAt(diary.getCreatedAt())
+                .nickName(member.getNickname() != null ? member.getNickname() : "")
+                .createdAt(diary.getCreatedAt() != null? diary.getCreatedAt() : LocalDateTime.now())
                 .updatedAt(diary.getUpdatedAt())
-                .content(diary.getContent())
+                .content(diary.getContent() != null ? diary.getContent() : "")
                 .chatResponse(chatResult != null? chatResult.getChatResponse() : "")
                 .build());
     }
