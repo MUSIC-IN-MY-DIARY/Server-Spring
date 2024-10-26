@@ -7,6 +7,8 @@ import com.diary.musicinmydiaryspring.chat.repository.ChatRepository;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.common.response.CustomException;
+import com.diary.musicinmydiaryspring.song.entity.Song;
+import com.diary.musicinmydiaryspring.song.serivce.SongSerivce;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ public class ChatService {
 
     private final RestClient restClient;
     private final ChatRepository chatRepository;
+    private final SongSerivce songSerivce;
 
     /**
      * FastAPI에게 응답을 요청하는 메서드
@@ -55,9 +58,13 @@ public class ChatService {
     public BaseResponse<ChatResponseDto> saveChatAndResponse(ChatRequestDto chatRequestDto){
         ChatResponseDto chatResponseDto = requestChatResponse(chatRequestDto);
 
+        Song song = songSerivce.getOrCreateSong(chatResponseDto.getSongResponseDto());
+
         Chat chat = Chat.builder()
-                .createdAt(LocalDateTime.now())
-                .response(chatResponseDto.getChatResponse())
+                .createdAt(chatResponseDto.getCreatedAt() != null ? chatResponseDto.getCreatedAt() : LocalDateTime.now())
+                .chatResponse(chatResponseDto.getChatResponse())
+                .song(song)
+                .isSaved(false)
                 .build();
 
         chatRepository.save(chat);

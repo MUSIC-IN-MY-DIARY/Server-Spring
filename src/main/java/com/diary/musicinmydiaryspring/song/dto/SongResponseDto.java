@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 public class SongResponseDto {
-    @JsonProperty("id")
+    @JsonProperty("song_id")
     private Long id;
 
     @JsonProperty("album_title")

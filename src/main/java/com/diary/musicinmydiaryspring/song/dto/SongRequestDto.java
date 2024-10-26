@@ -6,11 +6,9 @@ import lombok.Data;
 
 @Data
 public class SongRequestDto {
-    @JsonProperty("id")
+    @JsonProperty("song_id")
     private Long id;
 
     @JsonProperty("album_id")
     private Long albumId;
-
-
 }

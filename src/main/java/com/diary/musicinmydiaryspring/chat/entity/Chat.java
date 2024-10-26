@@ -26,16 +26,16 @@ public class Chat {
     private LocalDateTime createdAt;
 
     @Column(unique = true, nullable = false)
-    private String response;
+    private String chatResponse;
 
     @Column
     private Boolean isSaved;
 
     @Builder
-    public Chat(Song song, LocalDateTime createdAt, String response, Boolean isSaved){
+    public Chat(Song song, LocalDateTime createdAt, String chatResponse, Boolean isSaved){
         this.song = song;
         this.createdAt = createdAt;
-        this.response = response;
+        this.chatResponse = chatResponse;
         this.isSaved = isSaved;
     }
 }

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @Data
 public class ChatResponseDto {
-    @JsonProperty("id")
+    @JsonProperty("chat_id")
     private Long id;
 
     @JsonProperty("created_at")
@@ -19,4 +19,7 @@ public class ChatResponseDto {
 
     @JsonProperty("chat_response")
     private String chatResponse;
+
+    @JsonProperty("song_info")
+    private SongResponseDto songResponseDto;
 }
