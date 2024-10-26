@@ -10,7 +10,11 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatRequestDto {
+    @JsonProperty("chat_id")
+    private Long chatId;
+
     @JsonProperty("member_id")
     private Long memberId;
 

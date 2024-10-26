@@ -7,10 +7,7 @@ import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,10 +21,21 @@ public class ChatController {
             @Validated @RequestBody ChatRequestDto chatRequestDto
     )
     {
-        if (chatRequestDto == null){
+        if (chatRequestDto == null || chatRequestDto.getMemberId() == null){
             return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_INPUT);
         }
 
         return chatService.saveChatAndResponse(chatRequestDto);
+    }
+
+    @PutMapping("/like")
+    public BaseResponse<ChatResponseDto> likeChat(
+            @Validated @RequestBody ChatRequestDto chatRequestDto
+    ){
+        if (chatRequestDto == null || chatRequestDto.getChatId() == null){
+            return new BaseResponse<>(BaseResponseStatus.NOT_FOUND_CHAT_ID);
+        }
+
+        return chatService.likeChat(chatRequestDto.getChatId());
     }
 }

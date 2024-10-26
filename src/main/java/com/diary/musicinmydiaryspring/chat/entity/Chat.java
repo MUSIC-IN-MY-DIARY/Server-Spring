@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -29,13 +28,13 @@ public class Chat {
     private String chatResponse;
 
     @Column
-    private Boolean isSaved;
+    private Boolean isLiked;
 
     @Builder
-    public Chat(Song song, LocalDateTime createdAt, String chatResponse, Boolean isSaved){
+    public Chat(Song song, LocalDateTime createdAt, String chatResponse, Boolean isLiked){
         this.song = song;
         this.createdAt = createdAt;
         this.chatResponse = chatResponse;
-        this.isSaved = isSaved;
+        this.isLiked = isLiked;
     }
 }

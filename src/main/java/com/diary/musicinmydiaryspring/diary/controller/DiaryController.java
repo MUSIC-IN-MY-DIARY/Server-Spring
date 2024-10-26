@@ -39,6 +39,6 @@ public class DiaryController {
         }
         String email = principal.getName();
 
-        return diaryservice.wirteDiary(diaryRequestDto, email);
+        return diaryservice.writeDiary(diaryRequestDto, email);
     }
 }

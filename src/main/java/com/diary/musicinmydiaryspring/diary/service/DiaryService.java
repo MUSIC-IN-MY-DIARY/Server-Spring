@@ -29,7 +29,7 @@ public class DiaryService {
      * @param email
      */
     @Transactional
-    public BaseResponse<DiaryResponseDto> wirteDiary(DiaryRequestDto diaryRequestDto, String email) {
+    public BaseResponse<DiaryResponseDto> writeDiary(DiaryRequestDto diaryRequestDto, String email) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_MEMBER));
 

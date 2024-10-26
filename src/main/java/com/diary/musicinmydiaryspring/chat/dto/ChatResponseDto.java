@@ -22,4 +22,7 @@ public class ChatResponseDto {
 
     @JsonProperty("song_info")
     private SongResponseDto songResponseDto;
+
+    @JsonProperty("is_liked")
+    private Boolean isLiked;
 }

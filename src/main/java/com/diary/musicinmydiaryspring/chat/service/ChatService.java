@@ -51,7 +51,7 @@ public class ChatService {
 
     /**
      * FastAPI의 응답값을 저장하고 사용자에게 반환하는 메서드
-     * @param chatRequestDto 요청 객체
+     * @param chatRequestDto 요청 객체`
      * return BaseResponse<ChatResponseDto> 응답 객체
      * */
     @Transactional
@@ -64,7 +64,7 @@ public class ChatService {
                 .createdAt(chatResponseDto.getCreatedAt() != null ? chatResponseDto.getCreatedAt() : LocalDateTime.now())
                 .chatResponse(chatResponseDto.getChatResponse())
                 .song(song)
-                .isSaved(false)
+                .isLiked(false)
                 .build();
 
         chatRepository.save(chat);
@@ -72,6 +72,26 @@ public class ChatService {
         return new BaseResponse<>(ChatResponseDto.builder()
                 .createdAt(LocalDateTime.now())
                 .chatResponse(chatResponseDto.getChatResponse())
+                .build());
+    }
+
+    /**
+     * Chat 엔티티의 isLiked 필드를 true로 업데이트하는 메서드
+     * @param chatId Chat 엔티티의 ID
+     * @return BaseResponse<ChatResponseDto> 응답 객체
+     */
+    @Transactional
+    public BaseResponse<ChatResponseDto> likeChat(Long chatId) {
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_CHAT));
+
+        chat.setIsLiked(true);
+        chatRepository.save(chat);
+
+        return new BaseResponse<>(ChatResponseDto.builder()
+                .id(chat.getId())
+                .createdAt(chat.getCreatedAt())
+                .chatResponse(chat.getChatResponse())
+                .isLiked(true)
                 .build());
     }
 }
