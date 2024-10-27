@@ -34,8 +34,9 @@ public class DiaryController {
         if (diaryRequestDto == null){
             return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_INPUT);
         }
-        System.out.println(principal + "하...");
+      
         String email = principal.getName();
+
 
         return diaryService.writeDiary(diaryRequestDto, email);
     }
