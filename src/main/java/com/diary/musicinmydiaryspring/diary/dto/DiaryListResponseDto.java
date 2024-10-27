@@ -7,15 +7,12 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-@Data
 @Builder
+@Data
 @AllArgsConstructor
-public class DiaryResponseDto {
+public class DiaryListResponseDto {
     @JsonProperty("diary_id")
-    private Long id;
-
-    @JsonProperty("nickname")
-    private String nickName;
+    private Long diaryId;
 
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
@@ -25,7 +22,4 @@ public class DiaryResponseDto {
 
     @JsonProperty("diary_content")
     private String content;
-
-    @JsonProperty("chat_response")
-    private String chatResponse;
 }

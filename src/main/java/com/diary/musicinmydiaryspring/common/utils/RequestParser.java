@@ -22,18 +22,6 @@ public class RequestParser {
         return null;
     }
 
-    /**
-     * HTTP 요청에서 설정된 email 속성을 추출하는 메서드
-     * @param request HTTP 요청 객체
-     * @return 요청 속성에서 추출된 이메일 문자열, 속성이 없으면 null 반환
-     */
-    public static String extractEmail(HttpServletRequest request){
-        Object attribute = request.getAttribute(EMAIL);
-        if (attribute == null){
-            return null;
-        }
-        return attribute.toString();
-    }
 
     /**
      * JWT의 Claims 객체로부터 이메일 정보를 추출하는 메서드

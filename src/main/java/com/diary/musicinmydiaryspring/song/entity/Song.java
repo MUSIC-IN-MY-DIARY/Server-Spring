@@ -1,8 +1,12 @@
 package com.diary.musicinmydiaryspring.song.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
+@AllArgsConstructor
+@Builder
 @Entity
 @Data
 @Table(name="song")

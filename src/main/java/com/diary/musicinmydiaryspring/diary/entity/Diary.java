@@ -21,12 +21,9 @@ public class Diary {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private Song song;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
     @Column
@@ -34,12 +31,4 @@ public class Diary {
 
     @Column(nullable = false)
     private String content;
-
-    @Column
-    private String isSaved;
-
-    @PrePersist
-    public void prePersist(){
-        this.createdAt = (this.createdAt == null) ? LocalDateTime.now() : this.createdAt;
-    }
 }

@@ -25,7 +25,7 @@ public class MemberService {
         }
 
         if (!signupRequestDto.isPasswordConfirmed()){
-            return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_DIARY_INPUT);
+            return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_INPUT);
         }
 
         String encodedPassword = passwordEncoder.encode(signupRequestDto.getPassword());
@@ -41,6 +41,7 @@ public class MemberService {
         return new BaseResponse<>(MemberDto.builder()
                 .email(member.getUsername())
                 .nickname(member.getNickname())
+                .profile(member.getProfile() != null ? member.getProfile() : "")
                 .build());
     }
 }

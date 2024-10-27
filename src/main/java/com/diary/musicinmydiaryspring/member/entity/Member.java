@@ -1,5 +1,6 @@
 package com.diary.musicinmydiaryspring.member.entity;
 
+import com.diary.musicinmydiaryspring.diary.entity.Diary;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,6 +33,9 @@ public class Member implements UserDetails {
 
     @Column
     private String profile;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Diary> diaries;
 
 
     @Builder

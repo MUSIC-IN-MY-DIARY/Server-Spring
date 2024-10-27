@@ -2,41 +2,55 @@ package com.diary.musicinmydiaryspring.diary.controller;
 
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
+import com.diary.musicinmydiaryspring.diary.dto.DiaryListResponseDto;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryRequestDto;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryResponseDto;
-import com.diary.musicinmydiaryspring.diary.entity.Diary;
 import com.diary.musicinmydiaryspring.diary.service.DiaryService;
+import com.diary.musicinmydiaryspring.member.entity.Member;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.List;
 
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/dashboard")
+@RequestMapping("/diary")
 public class DiaryController {
-    private final DiaryService diaryservice;
+    private final DiaryService diaryService;
 
-    @PostMapping("/{memberId}/diary")
+    @PostMapping("/write")
     public BaseResponse<DiaryResponseDto> writeDiary(
-            @PathVariable Long memberId,
-            @Validated @RequestBody DiaryRequestDto diaryRequestDto
+            @Validated @RequestBody DiaryRequestDto diaryRequestDto,
+            Principal principal
             ){
 
-        if (memberId == null || memberId < 0){
-            return new BaseResponse<>(BaseResponseStatus.NOT_FOUND_DIARY_ID);
-        }
-
         if (diaryRequestDto == null){
-            return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_DIARY_INPUT);
+            return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_INPUT);
+        }
+      
+        String email = principal.getName();
+
+
+        return diaryService.writeDiary(diaryRequestDto, email);
+    }
+
+    @GetMapping("/all")
+    public BaseResponse<List<DiaryListResponseDto>> getAllDiary(
+            @AuthenticationPrincipal Principal principal
+    ){
+
+        if (principal == null){
+            return new BaseResponse<>(BaseResponseStatus.UNAUTHORIZED);
         }
 
-        return diaryservice.wirteDiary(memberId, diaryRequestDto);
+        String email = principal.getName();
+        return diaryService.getAllDiaries(email);
     }
 }
