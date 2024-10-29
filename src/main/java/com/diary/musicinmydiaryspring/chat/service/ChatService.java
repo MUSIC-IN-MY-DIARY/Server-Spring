@@ -32,7 +32,7 @@ public class ChatService {
      * return ChatResponseDto 응답 객체
      * */
     public ChatResponseDto requestChatResponse(ChatRequestDto chatRequestDto){
-        String url = "http://localhost:8000/chat/request";
+        String url = "http://diary-music.kro.kr/api/question/";
 
         ResponseEntity<ChatResponseDto> chatResponseDto = restClient.post()
                 .uri(url)
