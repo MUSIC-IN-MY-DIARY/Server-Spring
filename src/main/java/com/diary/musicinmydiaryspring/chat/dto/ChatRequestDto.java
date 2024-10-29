@@ -10,13 +10,6 @@ import lombok.Data;
 @Data
 @Builder
 public class ChatRequestDto {
-    @JsonProperty("chat_id")
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Long chatId;
-
-    @JsonProperty("member_id")
-    private Long memberId;
-
     @JsonProperty("diary_content")
     private String diaryContent;
 }
