@@ -51,7 +51,7 @@ public class DiaryService {
         diaryRepository.save(diary);
 
         ChatRequestDto chatRequestDto = ChatRequestDto.builder()
-                .memberId(member.getId())
+
                 .diaryContent(diary.getContent())
                 .build();
 
