@@ -21,21 +21,14 @@ public class ChatController {
             @Validated @RequestBody ChatRequestDto chatRequestDto
     )
     {
-        if (chatRequestDto == null || chatRequestDto.getMemberId() == null){
-            return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_INPUT);
-        }
-
         return chatService.saveChatAndResponse(chatRequestDto);
     }
 
     @PutMapping("/like")
     public BaseResponse<ChatResponseDto> likeChat(
-            @Validated @RequestBody ChatRequestDto chatRequestDto
+            @RequestParam Long chatId
     ){
-        if (chatRequestDto == null || chatRequestDto.getChatId() == null){
-            return new BaseResponse<>(BaseResponseStatus.NOT_FOUND_CHAT_ID);
-        }
 
-        return chatService.likeChat(chatRequestDto.getChatId());
+        return chatService.likeChat(chatId);
     }
 }

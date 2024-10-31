@@ -7,11 +7,15 @@ import com.diary.musicinmydiaryspring.chat.repository.ChatRepository;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.common.response.CustomException;
+import com.diary.musicinmydiaryspring.member.entity.Member;
+import com.diary.musicinmydiaryspring.member.repsitory.MemberRepository;
 import com.diary.musicinmydiaryspring.song.entity.Song;
 import com.diary.musicinmydiaryspring.song.serivce.SongSerivce;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -25,6 +29,7 @@ public class ChatService {
     private final RestClient restClient;
     private final ChatRepository chatRepository;
     private final SongSerivce songSerivce;
+    private final MemberRepository memberRepository;
 
     /**
      * FastAPI에게 응답을 요청하는 메서드
@@ -57,7 +62,6 @@ public class ChatService {
     @Transactional
     public BaseResponse<ChatResponseDto> saveChatAndResponse(ChatRequestDto chatRequestDto){
         ChatResponseDto chatResponseDto = requestChatResponse(chatRequestDto);
-
         Song song = songSerivce.getOrCreateSong(chatResponseDto.getSongResponseDto());
 
         Chat chat = Chat.builder()
@@ -73,6 +77,14 @@ public class ChatService {
                 .createdAt(LocalDateTime.now())
                 .chatResponse(chatResponseDto.getChatResponse())
                 .build());
+    }
+
+    private Long getCurrentMemberId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_MEMBER));
+        return member.getId();
     }
 
     /**
