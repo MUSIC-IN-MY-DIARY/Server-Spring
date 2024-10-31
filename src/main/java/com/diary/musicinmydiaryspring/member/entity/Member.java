@@ -31,19 +31,12 @@ public class Member implements UserDetails {
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Column
-    private String profile;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Diary> diaries;
-
 
     @Builder
-    public Member(String email, String password, String nickname, String profile){
+    public Member(String email, String password, String nickname){
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.profile = profile;
     }
 
     @Override

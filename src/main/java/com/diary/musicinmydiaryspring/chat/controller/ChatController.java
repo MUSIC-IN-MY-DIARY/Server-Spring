@@ -21,6 +21,10 @@ public class ChatController {
             @Validated @RequestBody ChatRequestDto chatRequestDto
     )
     {
+        if (chatRequestDto == null){
+            return new BaseResponse<>(BaseResponseStatus.NOT_FOUND_CHAT);
+        }
+
         return chatService.saveChatAndResponse(chatRequestDto);
     }
 
@@ -28,6 +32,10 @@ public class ChatController {
     public BaseResponse<ChatResponseDto> likeChat(
             @RequestParam Long chatId
     ){
+
+        if (chatId == null){
+            return new BaseResponse<>(BaseResponseStatus.NOT_FOUND_CHAT_ID);
+        }
 
         return chatService.likeChat(chatId);
     }

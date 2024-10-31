@@ -1,5 +1,7 @@
 package com.diary.musicinmydiaryspring.chat.service;
 
+import com.diary.musicinmydiaryspring.bookmark.repository.BookmarkRepository;
+import com.diary.musicinmydiaryspring.bookmark.service.BookmarkService;
 import com.diary.musicinmydiaryspring.chat.dto.ChatRequestDto;
 import com.diary.musicinmydiaryspring.chat.dto.ChatResponseDto;
 import com.diary.musicinmydiaryspring.chat.entity.Chat;
@@ -28,8 +30,7 @@ public class ChatService {
 
     private final RestClient restClient;
     private final ChatRepository chatRepository;
-    private final SongSerivce songSerivce;
-    private final MemberRepository memberRepository;
+    private final BookmarkService bookmarkService;
 
     /**
      * FastAPI에게 응답을 요청하는 메서드
@@ -62,12 +63,10 @@ public class ChatService {
     @Transactional
     public BaseResponse<ChatResponseDto> saveChatAndResponse(ChatRequestDto chatRequestDto){
         ChatResponseDto chatResponseDto = requestChatResponse(chatRequestDto);
-        Song song = songSerivce.getOrCreateSong(chatResponseDto.getSongResponseDto());
 
         Chat chat = Chat.builder()
                 .createdAt(chatResponseDto.getCreatedAt() != null ? chatResponseDto.getCreatedAt() : LocalDateTime.now())
                 .chatResponse(chatResponseDto.getChatResponse())
-                .song(song)
                 .isLiked(false)
                 .build();
 
@@ -79,16 +78,9 @@ public class ChatService {
                 .build());
     }
 
-    private Long getCurrentMemberId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName();
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_MEMBER));
-        return member.getId();
-    }
 
     /**
-     * Chat 엔티티의 isLiked 필드를 true로 업데이트하는 메서드
+     * Chat 엔티티의 isLiked 필드를 true로 업데이트하고 북마크 등록하는 메서드
      * @param chatId Chat 엔티티의 ID
      * @return BaseResponse<ChatResponseDto> 응답 객체
      */
@@ -98,6 +90,7 @@ public class ChatService {
 
         chat.setIsLiked(true);
         chatRepository.save(chat);
+        bookmarkService.addBookmark(chat);
 
         return new BaseResponse<>(ChatResponseDto.builder()
                 .id(chat.getId())

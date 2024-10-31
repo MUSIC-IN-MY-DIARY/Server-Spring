@@ -41,7 +41,6 @@ public class MemberService {
         return new BaseResponse<>(MemberDto.builder()
                 .email(member.getUsername())
                 .nickname(member.getNickname())
-                .profile(member.getProfile() != null ? member.getProfile() : "")
                 .build());
     }
 }

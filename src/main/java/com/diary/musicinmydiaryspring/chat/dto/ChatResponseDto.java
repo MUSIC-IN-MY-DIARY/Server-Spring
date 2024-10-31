@@ -20,9 +20,6 @@ public class ChatResponseDto {
     @JsonProperty("chat_response")
     private String chatResponse;
 
-    @JsonProperty("song_info")
-    private SongResponseDto songResponseDto;
-
     @JsonProperty("is_liked")
     private Boolean isLiked;
 }

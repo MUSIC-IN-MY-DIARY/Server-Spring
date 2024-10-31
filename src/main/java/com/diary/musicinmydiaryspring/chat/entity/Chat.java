@@ -1,5 +1,6 @@
 package com.diary.musicinmydiaryspring.chat.entity;
 
+import com.diary.musicinmydiaryspring.diary.entity.Diary;
 import com.diary.musicinmydiaryspring.song.entity.Song;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -17,9 +18,9 @@ public class Chat {
     @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="song_id", nullable = false)
-    private Song song;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="diary_id", nullable = false)
+    private Diary diary;
 
     @Column(unique = true, nullable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -31,8 +32,7 @@ public class Chat {
     private Boolean isLiked;
 
     @Builder
-    public Chat(Song song, LocalDateTime createdAt, String chatResponse, Boolean isLiked){
-        this.song = song;
+    public Chat(LocalDateTime createdAt, String chatResponse, Boolean isLiked){
         this.createdAt = createdAt;
         this.chatResponse = chatResponse;
         this.isLiked = isLiked;
