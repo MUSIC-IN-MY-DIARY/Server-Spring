@@ -1,7 +1,7 @@
 package com.diary.musicinmydiaryspring.song.serivce;
 
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
-import com.diary.musicinmydiaryspring.common.response.CustomException;
+import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
 import com.diary.musicinmydiaryspring.song.dto.SongResponseDto;
 import com.diary.musicinmydiaryspring.song.entity.Song;
 import com.diary.musicinmydiaryspring.song.repository.SongRepository;
@@ -19,7 +19,7 @@ public class SongSerivce {
 
         if (songResponseDto.getId() != null){
             return songRepository.findById(songResponseDto.getId())
-                    .orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_SONG));
+                    .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_SONG));
         }
 
         return Song.builder()

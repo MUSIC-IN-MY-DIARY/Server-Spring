@@ -1,10 +1,10 @@
 package com.diary.musicinmydiaryspring.common.response;
 
-public class CustomException extends RuntimeException{
+public class CustomRuntimeException extends RuntimeException{
 
     private final BaseResponseStatus status;
 
-    public CustomException(BaseResponseStatus status){
+    public CustomRuntimeException(BaseResponseStatus status){
         super(status.getMessage());
         this.status = status;
     }

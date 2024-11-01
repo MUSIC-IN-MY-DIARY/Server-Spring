@@ -2,6 +2,7 @@ package com.diary.musicinmydiaryspring.member.service;
 
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
+import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
 import com.diary.musicinmydiaryspring.member.dto.MemberDto;
 import com.diary.musicinmydiaryspring.member.dto.SignupRequestDto;
 import com.diary.musicinmydiaryspring.member.entity.Member;
@@ -21,11 +22,8 @@ public class MemberService {
     public BaseResponse<MemberDto> signup(SignupRequestDto signupRequestDto){
 
         if (memberRepository.existsByEmail(signupRequestDto.getUsername())){
-            return new BaseResponse<>(BaseResponseStatus.ALREADY_EXIST_EMAIL);
-        }
-
-        if (!signupRequestDto.isPasswordConfirmed()){
-            return new BaseResponse<>(BaseResponseStatus.BAD_REQUEST_INPUT);
+            throw new CustomRuntimeException(BaseResponseStatus.ALREADY_EXIST_EMAIL);
+//            return new BaseResponse<>(BaseResponseStatus.ALREADY_EXIST_EMAIL);
         }
 
         String encodedPassword = passwordEncoder.encode(signupRequestDto.getPassword());

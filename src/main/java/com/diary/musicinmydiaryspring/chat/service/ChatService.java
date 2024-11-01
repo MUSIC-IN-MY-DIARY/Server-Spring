@@ -1,6 +1,5 @@
 package com.diary.musicinmydiaryspring.chat.service;
 
-import com.diary.musicinmydiaryspring.bookmark.repository.BookmarkRepository;
 import com.diary.musicinmydiaryspring.bookmark.service.BookmarkService;
 import com.diary.musicinmydiaryspring.chat.dto.ChatRequestDto;
 import com.diary.musicinmydiaryspring.chat.dto.ChatResponseDto;
@@ -8,16 +7,10 @@ import com.diary.musicinmydiaryspring.chat.entity.Chat;
 import com.diary.musicinmydiaryspring.chat.repository.ChatRepository;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
-import com.diary.musicinmydiaryspring.common.response.CustomException;
-import com.diary.musicinmydiaryspring.member.entity.Member;
-import com.diary.musicinmydiaryspring.member.repsitory.MemberRepository;
-import com.diary.musicinmydiaryspring.song.entity.Song;
-import com.diary.musicinmydiaryspring.song.serivce.SongSerivce;
+import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
@@ -45,10 +38,10 @@ public class ChatService {
                 .body(chatRequestDto)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                    throw new CustomException(BaseResponseStatus.INTERNAL_CLIENT_ERROR);
+                    throw new CustomRuntimeException(BaseResponseStatus.INTERNAL_CLIENT_ERROR);
                 })
                 .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                    throw new CustomException(BaseResponseStatus.SERVER_ERROR);
+                    throw new CustomRuntimeException(BaseResponseStatus.SERVER_ERROR);
                 })
                 .toEntity(ChatResponseDto.class);
 
@@ -86,7 +79,7 @@ public class ChatService {
      */
     @Transactional
     public BaseResponse<ChatResponseDto> likeChat(Long chatId) {
-        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_CHAT));
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_CHAT));
 
         chat.setIsLiked(true);
         chatRepository.save(chat);

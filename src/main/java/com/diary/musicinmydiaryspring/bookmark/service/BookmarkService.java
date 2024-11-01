@@ -1,6 +1,5 @@
 package com.diary.musicinmydiaryspring.bookmark.service;
 
-import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkDetailRequestDto;
 import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkDetailResponseDto;
 import com.diary.musicinmydiaryspring.bookmark.entity.Bookmark;
 import com.diary.musicinmydiaryspring.bookmark.repository.BookmarkRepository;
@@ -8,7 +7,7 @@ import com.diary.musicinmydiaryspring.chat.dto.ChatResponseDto;
 import com.diary.musicinmydiaryspring.chat.entity.Chat;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
-import com.diary.musicinmydiaryspring.common.response.CustomException;
+import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryResponseDto;
 import com.diary.musicinmydiaryspring.diary.entity.Diary;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +25,13 @@ public class BookmarkService {
     public void addBookmark(Chat chat){
 
         if (chat == null){
-            throw new CustomException(BaseResponseStatus.NOT_FOUND_CHAT);
+            throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_CHAT);
         }
 
         Boolean exists = bookmarkRepository.existsByChat(chat);
 
         if (exists){
-            throw new CustomException(BaseResponseStatus.ALREADY_ADD_BOOKMARK);
+            throw new CustomRuntimeException(BaseResponseStatus.ALREADY_ADD_BOOKMARK);
         }
 
         Bookmark bookmark = new Bookmark();
@@ -45,16 +44,16 @@ public class BookmarkService {
     public BaseResponse<BookmarkDetailResponseDto> getDetailBookmark(Long chatId) {
 
         Bookmark bookmark = bookmarkRepository.findBookmarkByChatId(chatId)
-                .orElseThrow(() -> new CustomException(BaseResponseStatus.NOT_FOUND_BOOKMARK));
+                .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK));
 
         Chat chat = bookmark.getChat();
         if (chat == null){
-            throw new CustomException(BaseResponseStatus.NOT_FOUND_CHAT);
+            throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_CHAT);
         }
 
         Diary diary = chat.getDiary();
         if (diary == null){
-            throw new CustomException(BaseResponseStatus.NOT_FOUND_DIARY);
+            throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_DIARY);
         }
 
         ChatResponseDto chatResponseDto = ChatResponseDto.builder()
