@@ -1,11 +1,16 @@
 package com.diary.musicinmydiaryspring.common.filter;
 
+import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.jwt.service.JwtService;
+import com.diary.musicinmydiaryspring.member.dto.MemberSignupResponseDto;
 import com.diary.musicinmydiaryspring.member.entity.Member;
 import com.diary.musicinmydiaryspring.member.service.MemberService;
 import com.diary.musicinmydiaryspring.jwt.Jwt;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -62,7 +67,16 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Jwt token = jwtService.createTokens(member.getId());
         addJwtToCookie(response, token.getAccessToken(), "accessToken");
 
-        sendMemberLoginResponse(response, HttpStatus.OK);
+//        sendMemberLoginResponse(response, HttpStatus.OK);
+
+        MemberSignupResponseDto memberSignupResponseDto = MemberSignupResponseDto.builder()
+                .id(member.getId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .build();
+
+        BaseResponse<MemberSignupResponseDto> memberResult = new BaseResponse<>(memberSignupResponseDto);
+        sendMemberLoginResponse(response, HttpStatus.OK, memberResult);
     }
 
     /**
@@ -80,12 +94,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     /**
      * Login 성공/실패 시 메세지 보내는 메서드
      * */
-    private void sendMemberLoginResponse(HttpServletResponse response, HttpStatus status) throws IOException{
-        Map<String, String> messageMap = new HashMap<>();
-        response.setContentType("application/json;charet=UTF-8");
+    private void sendMemberLoginResponse(
+            HttpServletResponse response,
+            HttpStatus status,
+            BaseResponse<?> baseResponse) throws IOException{
+        response.setContentType("application/json;charset=UTF-8");
         response.setStatus(status.value());
+
         PrintWriter out = response.getWriter();
-        out.print(new ObjectMapper().writeValueAsString(messageMap));
+        out.print(new ObjectMapper().writeValueAsString(baseResponse));
         out.flush();
     }
 
