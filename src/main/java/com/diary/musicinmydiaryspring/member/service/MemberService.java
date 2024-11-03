@@ -23,7 +23,6 @@ public class MemberService {
 
         if (memberRepository.existsByEmail(signupRequestDto.getUsername())){
             throw new CustomRuntimeException(BaseResponseStatus.ALREADY_EXIST_EMAIL);
-//            return new BaseResponse<>(BaseResponseStatus.ALREADY_EXIST_EMAIL);
         }
 
         String encodedPassword = passwordEncoder.encode(signupRequestDto.getPassword());
@@ -37,6 +36,7 @@ public class MemberService {
         memberRepository.save(member);
 
         return new BaseResponse<>(MemberDto.builder()
+                .id(member.getId())
                 .email(member.getUsername())
                 .nickname(member.getNickname())
                 .build());

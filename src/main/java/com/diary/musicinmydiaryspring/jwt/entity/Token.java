@@ -25,8 +25,10 @@ public class Token {
     @Enumerated(EnumType.STRING)
     private TokenType tokenType;
 
+    @Column(nullable = false)
     private String refreshToken;
 
+    @Column
     private LocalDateTime expiration;
 
     @Builder
