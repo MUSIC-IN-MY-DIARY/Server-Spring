@@ -25,8 +25,5 @@ public class Song {
     private String songTitle;
 
     @Column(nullable = false)
-    private String lyrics;
-
-    @Column(nullable = false)
     private String genre;
 }

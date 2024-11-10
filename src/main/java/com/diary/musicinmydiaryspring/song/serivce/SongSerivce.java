@@ -26,7 +26,6 @@ public class SongSerivce {
                 .albumTitle(songResponseDto.getAlbumTitle())
                 .artist(songResponseDto.getArtist())
                 .songTitle(songResponseDto.getSongTitle())
-                .lyrics(songResponseDto.getLyrics())
                 .genre(songResponseDto.getGenre())
                 .build();
     }
