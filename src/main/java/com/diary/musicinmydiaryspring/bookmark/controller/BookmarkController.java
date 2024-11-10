@@ -17,7 +17,11 @@ public class BookmarkController {
     public BaseResponse<BookmarkDetailResponseDto> getDetailBookmark(
             @RequestParam Long chatId
     ){
-        return bookmarkService.getDetailBookmark(chatId);
+//        return bookmarkService.getDetailBookmark(chatId);
+
+        return null;
     }
+
+
 
 }

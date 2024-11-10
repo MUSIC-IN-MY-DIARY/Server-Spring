@@ -3,13 +3,11 @@ package com.diary.musicinmydiaryspring.bookmark.entity;
 import com.diary.musicinmydiaryspring.chat.entity.Chat;
 import com.diary.musicinmydiaryspring.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name="bookmark")
 @Builder
