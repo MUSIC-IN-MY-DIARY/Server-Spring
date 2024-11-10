@@ -3,8 +3,8 @@ package com.diary.musicinmydiaryspring.member.service;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
-import com.diary.musicinmydiaryspring.member.dto.MemberSignupResponseDto;
-import com.diary.musicinmydiaryspring.member.dto.MemberSignupRequestDto;
+import com.diary.musicinmydiaryspring.member.dto.MemberResponseDto;
+import com.diary.musicinmydiaryspring.member.dto.MemberRequestDto;
 import com.diary.musicinmydiaryspring.member.entity.Member;
 import com.diary.musicinmydiaryspring.member.repsitory.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,23 +19,23 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public BaseResponse<MemberSignupResponseDto> signup(MemberSignupRequestDto memberSignupRequestDto){
+    public BaseResponse<MemberResponseDto> signup(MemberRequestDto memberRequestDto){
 
-        if (memberRepository.existsByEmail(memberSignupRequestDto.getUsername())){
+        if (memberRepository.existsByEmail(memberRequestDto.getUsername())){
             throw new CustomRuntimeException(BaseResponseStatus.ALREADY_EXIST_EMAIL);
         }
 
-        String encodedPassword = passwordEncoder.encode(memberSignupRequestDto.getPassword());
+        String encodedPassword = passwordEncoder.encode(memberRequestDto.getPassword());
 
         Member member = Member.builder()
-                .email(memberSignupRequestDto.getUsername())
+                .email(memberRequestDto.getUsername())
                 .password(encodedPassword)
-                .nickname(memberSignupRequestDto.getNickname())
+                .nickname(memberRequestDto.getNickname())
                 .build();
 
         memberRepository.save(member);
 
-        return new BaseResponse<>(MemberSignupResponseDto.builder()
+        return new BaseResponse<>(MemberResponseDto.builder()
                 .id(member.getId())
                 .email(member.getUsername())
                 .nickname(member.getNickname())

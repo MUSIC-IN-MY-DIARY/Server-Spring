@@ -3,6 +3,7 @@ package com.diary.musicinmydiaryspring.chat.entity;
 import com.diary.musicinmydiaryspring.diary.entity.Diary;
 import com.diary.musicinmydiaryspring.song.entity.Song;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "chat")
 public class Chat {
@@ -31,10 +34,17 @@ public class Chat {
     @Column
     private Boolean isLiked;
 
-    @Builder
-    public Chat(LocalDateTime createdAt, String chatResponse, Boolean isLiked){
-        this.createdAt = createdAt;
-        this.chatResponse = chatResponse;
-        this.isLiked = isLiked;
+    public static Chat create(Diary diary, String chatResponse) {
+        return Chat.builder()
+                .diary(diary)
+                .createdAt(LocalDateTime.now())
+                .chatResponse(chatResponse)
+                .isLiked(false)
+                .build();
     }
+
+    public void updateIsLiked() {
+        this.isLiked = !isLiked;
+    }
+
 }

@@ -2,15 +2,12 @@ package com.diary.musicinmydiaryspring.common.filter;
 
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.jwt.service.JwtService;
-import com.diary.musicinmydiaryspring.member.dto.MemberSignupResponseDto;
+import com.diary.musicinmydiaryspring.member.dto.MemberResponseDto;
 import com.diary.musicinmydiaryspring.member.entity.Member;
 import com.diary.musicinmydiaryspring.member.service.MemberService;
 import com.diary.musicinmydiaryspring.jwt.Jwt;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -27,8 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
@@ -67,15 +62,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Jwt token = jwtService.createTokens(member.getId());
         addJwtToCookie(response, token.getAccessToken(), "accessToken");
 
-//        sendMemberLoginResponse(response, HttpStatus.OK);
-
-        MemberSignupResponseDto memberSignupResponseDto = MemberSignupResponseDto.builder()
+        MemberResponseDto memberResponseDto = MemberResponseDto.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .build();
 
-        BaseResponse<MemberSignupResponseDto> memberResult = new BaseResponse<>(memberSignupResponseDto);
+        BaseResponse<MemberResponseDto> memberResult = new BaseResponse<>(memberResponseDto);
         sendMemberLoginResponse(response, HttpStatus.OK, memberResult);
     }
 

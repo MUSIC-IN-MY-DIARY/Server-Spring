@@ -1,8 +1,8 @@
 package com.diary.musicinmydiaryspring.member.controller;
 
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
-import com.diary.musicinmydiaryspring.member.dto.MemberSignupResponseDto;
-import com.diary.musicinmydiaryspring.member.dto.MemberSignupRequestDto;
+import com.diary.musicinmydiaryspring.member.dto.MemberResponseDto;
+import com.diary.musicinmydiaryspring.member.dto.MemberRequestDto;
 
 import com.diary.musicinmydiaryspring.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public BaseResponse<MemberSignupResponseDto> signup(@Validated @RequestBody MemberSignupRequestDto memberSignupRequestDto){
-        return memberService.signup(memberSignupRequestDto);
+    public BaseResponse<MemberResponseDto> signup(@Validated @RequestBody MemberRequestDto memberRequestDto){
+        return memberService.signup(memberRequestDto);
     }
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Data
 @RequiredArgsConstructor
-public class MemberSignupResponseDto {
+public class MemberResponseDto {
     @JsonProperty("id")
     private Long id;
 
@@ -22,7 +22,7 @@ public class MemberSignupResponseDto {
 
 
     @Builder
-    public MemberSignupResponseDto(Long id, String email, String nickname){
+    public MemberResponseDto(Long id, String email, String nickname){
         this.id = id;
         this.email = email;
         this.nickname = nickname;
