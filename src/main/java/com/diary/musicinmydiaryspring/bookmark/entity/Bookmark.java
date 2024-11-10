@@ -15,7 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Bookmark {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JoinColumn(name = "chat_id", nullable = false)

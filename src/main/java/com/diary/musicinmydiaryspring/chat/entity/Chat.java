@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @Table(name = "chat")
 public class Chat {
 
-    @Id @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
