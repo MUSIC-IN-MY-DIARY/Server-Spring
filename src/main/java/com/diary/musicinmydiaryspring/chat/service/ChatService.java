@@ -10,9 +10,13 @@ import com.diary.musicinmydiaryspring.chat.repository.ChatRepository;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
+import com.diary.musicinmydiaryspring.common.utils.JsonParser;
 import com.diary.musicinmydiaryspring.diary.entity.Diary;
 import com.diary.musicinmydiaryspring.diary.repository.DiaryRepository;
-import com.diary.musicinmydiaryspring.diary.service.DiaryService;
+import com.diary.musicinmydiaryspring.song.dto.SongResponseDto;
+import com.diary.musicinmydiaryspring.song.entity.Song;
+import com.diary.musicinmydiaryspring.song.repository.SongRepository;
+import com.diary.musicinmydiaryspring.song.serivce.SongSerivce;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -21,8 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
-import static com.diary.musicinmydiaryspring.chat.entity.Chat.create;
+import static com.diary.musicinmydiaryspring.chat.entity.Chat.createWithLyrics;
+import static com.diary.musicinmydiaryspring.chat.entity.Chat.createWithSongs;
 
 @Slf4j
 @Service
@@ -33,9 +40,11 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final BookmarkService bookmarkService;
     private final DiaryRepository diaryRepository;
+    private final SongSerivce songSerivce;
 
     private static final String RECOMMEND_URL = "https://diary-music.o-r.kr/api/recommend/";
     private static final String LYRICS_URL = "https://diary-music.o-r.kr/api/generate/";
+    private final SongRepository songRepository;
 
     /**
      * 모델 서버에 노래 추천 요청을 보내고 결과를 저장
@@ -44,12 +53,31 @@ public class ChatService {
      * @param diaryId 다이어리 ID
      * @return ChatRecommendResponseDto 추천된 노래 목록과 관련 정보를 담은 응답 객체
      */
+    @Transactional
     public ChatRecommendResponseDto requestAndSaveChatRecommendSongs(ChatRequestDto recommendRequestDto, Long diaryId){
         ChatRecommendResponseDto recommendResponse = postRequest(RECOMMEND_URL, recommendRequestDto, ChatRecommendResponseDto.class);
-        log.info("용학이 바보 : " + recommendResponse.getRecommendedSongs());
-//        log.info("용학이 바보 : " + recommendResponse.getRecommendedSongs().toString());
+        String beforeParsingJsonData = recommendResponse.getRecommendedSongs();
+        List<SongResponseDto> songResponseDtos = JsonParser.parseSongList(beforeParsingJsonData);
+        log.info("adw " + songResponseDtos.get(0));
+//        List<Song> songs = new ArrayList<>(); // Chat 만드려고
+
         Diary diary = findDiaryById(diaryId);
-        Chat chat = saveChat(diary, recommendResponse.toString());
+        Chat chat = saveChatWithSongs(diary); // chatRepository에 chat 저장
+
+
+        for (SongResponseDto songResponseDto : songResponseDtos) {
+            Song song = Song.builder()
+                    .chat(chat)
+                    .artist(songResponseDto.getArtist())
+                    .songTitle(songResponseDto.getSongTitle())
+                    .genre(songResponseDto.getGenre())
+                    .imageId(songResponseDto.getImageId())
+                    .build();
+//            songs.add(song);
+            songRepository.save(song);
+        }
+        // Chat 엔티티 만들어서 save 해주기 정도?
+
 
         ChatResponseDto chatResponseDto = createChatResponseDto(chat);
 
@@ -68,17 +96,18 @@ public class ChatService {
      * @param diaryId 요청과 연관된 다이어리 ID
      * @return ChatLyricsResponseDto 생성된 가사와 관련 정보를 담은 응답 객체
      */
+    @Transactional
     public ChatLyricsResponseDto requestChatGenerateLyrics(ChatRequestDto lyricsRequestDto, Long diaryId) {
 
         ChatLyricsResponseDto lyricsResponse = postRequest(LYRICS_URL, lyricsRequestDto, ChatLyricsResponseDto.class);
 
         Diary diary = findDiaryById(diaryId);
-        Chat chat = saveChat(diary, lyricsResponse.toString());
+        Chat chat = saveChatWithLyrics(diary, lyricsResponse.getGeneratedLyrics());
 
         ChatResponseDto chatResponseDto = createChatResponseDto(chat);
         ChatLyricsResponseDto chatLyricsResponseDto = ChatLyricsResponseDto.builder()
                 .chatResponseDto(chatResponseDto)
-                .generatedLyrics(lyricsResponse.toString())
+                .generatedLyrics(lyricsResponse.getGeneratedLyrics())
                 .build();
 
         return chatLyricsResponseDto;
@@ -140,14 +169,19 @@ public class ChatService {
      * 다이어리에 연관된 Chat 엔티티를 생성하고 저장
      *
      * @param diary Chat과 연관된 Diary 엔티티
-     * @param chatResponse Chat에 저장할 챗봇 응답
+     * @param songs Chat에 저장할 노래 리스트
      * @return 저장된 Chat 엔티티
      */
-    private Chat saveChat(Diary diary, String chatResponse) {
-        Chat chat = create(diary, chatResponse);
+    private Chat saveChatWithSongs(Diary diary) {
+        Chat chat = createWithSongs(diary);
         return chatRepository.save(chat);
     }
 
+    // 주석
+    private Chat saveChatWithLyrics(Diary diary, String lyrics) {
+        Chat chat = createWithLyrics(diary, lyrics);
+        return chatRepository.save(chat);
+    }
 
 
     /**
@@ -165,7 +199,6 @@ public class ChatService {
         bookmarkService.updateBookmark(chat);
 
         return new BaseResponse<>(chat.getIsLiked());
-
     }
 
 }
