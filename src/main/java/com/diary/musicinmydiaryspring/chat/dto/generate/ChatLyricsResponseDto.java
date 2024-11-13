@@ -11,6 +11,6 @@ public class ChatLyricsResponseDto{
     @JsonProperty("chat_response")
     private ChatResponseDto chatResponseDto;
 
-    @JsonProperty("generatedLyrics")
+    @JsonProperty("answer")
     private String generatedLyrics;
 }

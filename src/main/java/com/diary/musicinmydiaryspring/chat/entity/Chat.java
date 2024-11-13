@@ -1,7 +1,6 @@
 package com.diary.musicinmydiaryspring.chat.entity;
 
 import com.diary.musicinmydiaryspring.diary.entity.Diary;
-import com.diary.musicinmydiaryspring.song.entity.Song;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,22 +27,30 @@ public class Chat {
     @Column(unique = true, nullable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(unique = true, nullable = false)
-    private String chatResponse;
+    @Column(columnDefinition = "TEXT")
+    private String lyrics;
 
     @Column
     private Boolean isLiked;
 
-    public static Chat create(Diary diary, String chatResponse) {
+    public static Chat createChat(Diary diary) {
         return Chat.builder()
                 .diary(diary)
                 .createdAt(LocalDateTime.now())
-                .chatResponse(chatResponse)
                 .isLiked(false)
                 .build();
     }
 
-    public void updateIsLiked() {
+    public static Chat createChatWithLyrics(Diary diary, String lyrics) {
+        return Chat.builder()
+                .diary(diary)
+                .createdAt(LocalDateTime.now())
+                .lyrics(lyrics)
+                .isLiked(false)
+                .build();
+    }
+
+    public void updateChatIsLiked() {
         this.isLiked = !isLiked;
     }
 

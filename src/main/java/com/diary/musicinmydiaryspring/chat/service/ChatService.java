@@ -16,7 +16,7 @@ import com.diary.musicinmydiaryspring.diary.repository.DiaryRepository;
 import com.diary.musicinmydiaryspring.song.dto.SongResponseDto;
 import com.diary.musicinmydiaryspring.song.entity.Song;
 import com.diary.musicinmydiaryspring.song.repository.SongRepository;
-import com.diary.musicinmydiaryspring.song.serivce.SongSerivce;
+import com.diary.musicinmydiaryspring.song.service.SongService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatusCode;
@@ -25,11 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.diary.musicinmydiaryspring.chat.entity.Chat.createWithLyrics;
-import static com.diary.musicinmydiaryspring.chat.entity.Chat.createWithSongs;
+import static com.diary.musicinmydiaryspring.chat.entity.Chat.createChatWithLyrics;
+import static com.diary.musicinmydiaryspring.chat.entity.Chat.createChat;
 
 @Slf4j
 @Service
@@ -40,11 +39,12 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final BookmarkService bookmarkService;
     private final DiaryRepository diaryRepository;
-    private final SongSerivce songSerivce;
+    private final SongRepository songRepository;
+
 
     private static final String RECOMMEND_URL = "https://diary-music.o-r.kr/api/recommend/";
     private static final String LYRICS_URL = "https://diary-music.o-r.kr/api/generate/";
-    private final SongRepository songRepository;
+    private final SongService songService;
 
     /**
      * 모델 서버에 노래 추천 요청을 보내고 결과를 저장
@@ -58,39 +58,36 @@ public class ChatService {
         ChatRecommendResponseDto recommendResponse = postRequest(RECOMMEND_URL, recommendRequestDto, ChatRecommendResponseDto.class);
         String beforeParsingJsonData = recommendResponse.getRecommendedSongs();
         List<SongResponseDto> songResponseDtos = JsonParser.parseSongList(beforeParsingJsonData);
-        log.info("adw " + songResponseDtos.get(0));
-//        List<Song> songs = new ArrayList<>(); // Chat 만드려고
 
         Diary diary = findDiaryById(diaryId);
-        Chat chat = saveChatWithSongs(diary); // chatRepository에 chat 저장
-
+        Chat chat = saveChatWithSongs(diary);
 
         for (SongResponseDto songResponseDto : songResponseDtos) {
-            Song song = Song.builder()
-                    .chat(chat)
-                    .artist(songResponseDto.getArtist())
-                    .songTitle(songResponseDto.getSongTitle())
-                    .genre(songResponseDto.getGenre())
-                    .imageId(songResponseDto.getImageId())
-                    .build();
-//            songs.add(song);
+            Song song = Song.createSongWithChat(
+                    chat,
+                    songResponseDto.getArtist(),
+                    songResponseDto.getSongTitle(),
+                    songResponseDto.getGenre(),
+                    songResponseDto.getImageId()
+                    );
             songRepository.save(song);
         }
-        // Chat 엔티티 만들어서 save 해주기 정도?
 
+        List<Long> songIds = songService.findSongIdsByChatId(chat.getId());
 
         ChatResponseDto chatResponseDto = createChatResponseDto(chat);
 
         ChatRecommendResponseDto chatRecommendResponseDto = ChatRecommendResponseDto.builder()
                 .chatResponseDto(chatResponseDto)
                 .recommendedSongs(recommendResponse.getRecommendedSongs())
+                .songId(songIds)
                 .build();
 
         return chatRecommendResponseDto;
     }
 
     /**
-     * 외부 서비스에 가사 생성 요청을 보내고 결과를 저장
+     * FastAPI에 가사 생성 요청을 보내고 결과를 저장
      *
      * @param lyricsRequestDto 가사 생성 요청에 필요한 데이터
      * @param diaryId 요청과 연관된 다이어리 ID
@@ -114,8 +111,8 @@ public class ChatService {
     }
 
     /**
-     * 주어진 URL로 POST 요청을 보내고, 응답을 지정된 타입으로 반환합니다.
-     * 요청 중 발생할 수 있는 오류를 HTTP 상태 코드에 따라 처리합니다.
+     * 주어진 URL로 POST 요청을 보내고, 응답을 지정된 타입으로 반환
+     * 요청 중 발생할 수 있는 오류를 HTTP 상태 코드에 따라 처리
      *
      * @param url 요청을 보낼 URL
      * @param requestDto 요청에 필요한 데이터
@@ -169,17 +166,16 @@ public class ChatService {
      * 다이어리에 연관된 Chat 엔티티를 생성하고 저장
      *
      * @param diary Chat과 연관된 Diary 엔티티
-     * @param songs Chat에 저장할 노래 리스트
      * @return 저장된 Chat 엔티티
      */
     private Chat saveChatWithSongs(Diary diary) {
-        Chat chat = createWithSongs(diary);
+        Chat chat = createChat(diary);
         return chatRepository.save(chat);
     }
 
     // 주석
     private Chat saveChatWithLyrics(Diary diary, String lyrics) {
-        Chat chat = createWithLyrics(diary, lyrics);
+        Chat chat = createChatWithLyrics(diary, lyrics);
         return chatRepository.save(chat);
     }
 
@@ -194,7 +190,7 @@ public class ChatService {
         Chat chat = chatRepository.findById(chatId)
                 .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_CHAT));
 
-        chat.updateIsLiked();
+        chat.updateChatIsLiked();
         chatRepository.save(chat);
         bookmarkService.updateBookmark(chat);
 

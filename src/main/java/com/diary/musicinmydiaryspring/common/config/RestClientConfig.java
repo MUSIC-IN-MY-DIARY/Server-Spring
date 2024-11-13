@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestClientConfig {
 
-    private static final int READ_TIMEOUT = 5000;
+    private static final int READ_TIMEOUT = 7000;
     private static final int CONNECT_TIMEOUT = 10000;
 
     @Bean
