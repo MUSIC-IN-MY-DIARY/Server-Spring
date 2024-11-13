@@ -14,8 +14,8 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestClientConfig {
 
-    private static final int READ_TIMEOUT = 15000;
-    private static final int CONNECT_TIMEOUT = 30000;
+    private static final int READ_TIMEOUT = 5000;
+    private static final int CONNECT_TIMEOUT = 10000;
 
     @Bean
     public RestTemplate restTemplate() {
@@ -24,15 +24,12 @@ public class RestClientConfig {
         return new RestTemplate(factory);
     }
 
-    // HttpClient 생성 메서드
     private CloseableHttpClient createHttpClient() {
-        // 요청 설정에 대한 타임아웃 값 설정
         RequestConfig config = RequestConfig.custom()
                 .setConnectionRequestTimeout(Timeout.ofMilliseconds(CONNECT_TIMEOUT))
                 .setResponseTimeout(Timeout.ofMilliseconds(READ_TIMEOUT))
                 .build();
 
-        // HttpClient 생성 및 설정
         return HttpClients.custom()
                 .setDefaultRequestConfig(config)
                 .setConnectionManager(new PoolingHttpClientConnectionManager())
