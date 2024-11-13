@@ -105,7 +105,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     public void addJwtToCookie(HttpServletResponse response, String jwtToken, String cookieName){
         Cookie cookie = new Cookie(cookieName, jwtToken);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(60*120);
         response.addCookie(cookie);

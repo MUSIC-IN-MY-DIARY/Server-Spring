@@ -4,6 +4,7 @@ import com.diary.musicinmydiaryspring.jwt.JwtProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -47,23 +48,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        String jwtToken = getCookieValueFromToken(request, "accessToken");
 
-        String authorizationHeader = request.getHeader(Authorization);
-
-        if ( authorizationHeader != null && authorizationHeader.startsWith(TOKEN_PREFIX)){
-            String jwtToken = extractAccessToken(request);
-
-            try{
-                Authentication authentication = jwtProvider.getAuthentication(jwtToken);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (Exception e){
-                sendJwtExceptionResponse(response, new RuntimeException("인증 실패"));
-                return;
-            }
+        try{
+            Authentication authentication = jwtProvider.getAuthentication(jwtToken);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (Exception e){
+            sendJwtExceptionResponse(response, new RuntimeException("인증 실패"));
+            return;
         }
 
-        String token = extractAccessToken(request);
-        String email = jwtProvider.getClaims(token).getSubject();
+        String email = jwtProvider.getClaims(jwtToken).getSubject();
         request.setAttribute("email", email);
 
         filterChain.doFilter(request, response);
@@ -94,5 +89,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     private boolean isWhiteListed(String uri) {
         return PatternMatchUtils.simpleMatch(whiteListUris, uri);
+    }
+
+    /**
+     * 쿠키에서 액세스 토큰의 값을 긁어오는 메서드
+     * */
+    private String getCookieValueFromToken(HttpServletRequest request, String cookieName) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookieName.equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }
