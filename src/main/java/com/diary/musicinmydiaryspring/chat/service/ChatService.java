@@ -173,7 +173,13 @@ public class ChatService {
         return chatRepository.save(chat);
     }
 
-    // 주석
+    /**
+     * 작사를 추천받고 Chat에 저장
+     *
+     * @param diary Chat과 연관된 Diary 엔티티
+     * @param lyrics Chat에 저장한 lyrics
+     * @return Chat 저장된 Chat 엔티티
+     * */
     private Chat saveChatWithLyrics(Diary diary, String lyrics) {
         Chat chat = createChatWithLyrics(diary, lyrics);
         return chatRepository.save(chat);
