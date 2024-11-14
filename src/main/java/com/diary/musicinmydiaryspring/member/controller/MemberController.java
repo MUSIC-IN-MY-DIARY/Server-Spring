@@ -7,10 +7,9 @@ import com.diary.musicinmydiaryspring.member.dto.MemberRequestDto;
 import com.diary.musicinmydiaryspring.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,5 +20,13 @@ public class MemberController {
     @PostMapping("/signup")
     public BaseResponse<MemberResponseDto> signup(@Validated @RequestBody MemberRequestDto memberRequestDto){
         return memberService.signup(memberRequestDto);
+    }
+
+    @GetMapping("/verify")
+    public BaseResponse<MemberResponseDto> verifyMember(
+            Principal principal
+    ){
+        String email = principal.getName();
+        return memberService.verifyMember(email);
     }
 }
