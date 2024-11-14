@@ -37,119 +37,150 @@ public class BookmarkService {
     private final SongService songService;
 
     /**
-     * 특정 Chat을 북마크로 등록/해제하는 메서드
-     * @param chatId Chat 엔티티 아이디
-     * @param email 로그인한 사용자 정보
-     * return 북마크가 추가되면 true, 해제되면 false 반환
-     * */
+     * 특정 채팅에 대해 북마크 상태 업데이트
+     *
+     * @param email 북마크를 업데이트할 회원의 이메일
+     * @param chatId 북마크로 추가하거나 해제할 채팅의 ID
+     * @return 업데이트된 북마크 상태가 포함된 응답
+     * @throws CustomRuntimeException 회원이나 채팅을 찾을 수 없을 때 발생
+     */
     @Transactional
     public BaseResponse<BookmarkResponseDto> updateBookmark(String email, Long chatId){
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_MEMBER));
+        Member member = getMemberByEmail(email);
+        Chat chat = getChatById(chatId);
 
-        Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(()-> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_CHAT));
+        Bookmark existingBookmark = bookmarkRepository.findByMemberAndChat(member, chat).orElse(null);
+        BookmarkResponseDto bookmarkResponseDto = (existingBookmark != null) ? removeBookmark(existingBookmark) : addBookmark(chat, member);
 
-        Bookmark existingBookmark = bookmarkRepository.findByMemberAndChat(member, chat)
-                .orElse(null);
-
-        BookmarkResponseDto bookmarkResponseDto;
-        if (existingBookmark != null){
-            bookmarkRepository.delete(existingBookmark);
-            bookmarkResponseDto = BookmarkResponseDto.builder().isBookmarked(false).build();
-        } else{
-            bookmarkRepository.save(Bookmark.createBookmark(chat, member, true));
-            bookmarkResponseDto = BookmarkResponseDto.builder().isBookmarked(true).build();
-        }
         return new BaseResponse<>(bookmarkResponseDto);
     }
 
+    /**
+     * 새 북마크 추가
+     *
+     * @param chat 북마크로 추가할 채팅
+     * @param member 북마크를 추가하는 회원
+     * @return 북마크가 추가되었음을 나타내는 응답
+     */
+    private BookmarkResponseDto addBookmark(Chat chat, Member member) {
+        bookmarkRepository.save(Bookmark.createBookmark(chat, member, true));
+        return BookmarkResponseDto.builder().isBookmarked(true).build();
+    }
 
     /**
-     * 북마크 된 작사 응답 디테일 조회
-     * */
+     * 기존 북마크 제거
+     *
+     * @param existingBookmark 제거할 북마크
+     * @return 북마크가 제거되었음을 나타내는 응답
+     */
+    private BookmarkResponseDto removeBookmark(Bookmark existingBookmark) {
+        bookmarkRepository.delete(existingBookmark);
+        return BookmarkResponseDto.builder().isBookmarked(false).build();
+    }
+
+    /**
+     * 북마크된 채팅의 작사 상세 정보 조회
+     *
+     * @param email 작사 정보를 요청하는 회원의 이메일
+     * @param chatId 북마크된 채팅의 ID
+     * @return 북마크된 채팅의 상세 작사 정보가 포함된 응답
+     * @throws CustomRuntimeException 회원, 채팅 또는 북마크를 찾을 수 없을 때 발생
+     */
     public BaseResponse<BookmarkDetailLyricsResponseDto> getDetailBookmarkLyrics(String email, Long chatId) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_MEMBER));
-        Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(()-> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_CHAT));
+        Member member = getMemberByEmail(email);
+        Chat chat = getChatById(chatId);
 
         Bookmark bookmark = bookmarkRepository.findByMemberAndChat(member, chat)
                 .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK));
 
-        ChatResponseDto chatResponseDto = chatService.createChatResponseDto(chat);
 
-        if (bookmark.getIsBookmark()){
+        if (!bookmark.getIsBookmark()){
+            throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK);
+        }
 
-            // 파라미터로 받은 chatId에 해당하는 chat을 조회해야함.ChatLyricsResponseDto에 넣어야 함.
-            ChatLyricsResponseDto chatLyricsResponseDto = ChatLyricsResponseDto.builder()
-                    .chatResponseDto(chatResponseDto)
-                    .generatedLyrics(chat.getLyrics())
-                    .build();
+        ChatLyricsResponseDto chatLyricsResponseDto = createChatLyricsResponseDto(chat);
+        DiaryResponseDto diaryResponseDto = createDiaryResponse(chat);
 
-            // 해당 Chat이 참조하는 Diary를 조회해야함. DiaryResponseDto에 넣어야함.
-            DiaryResponseDto diaryResponseDto = DiaryResponseDto.builder()
-                    .id(chat.getDiary().getId())
-                    .nickName(chat.getDiary().getMember().getNickname())
-                    .createdAt(chat.getDiary().getCreatedAt())
-                    .content(chat.getDiary().getContent())
-                    .build();
-
-            BookmarkDetailLyricsResponseDto bookmarkDetailLyricsResponseDto = BookmarkDetailLyricsResponseDto.builder()
+        BookmarkDetailLyricsResponseDto bookmarkDetailLyricsResponseDto = BookmarkDetailLyricsResponseDto.builder()
                     .id(bookmark.getId())
                     .chatLyricsResponseDto(chatLyricsResponseDto)
                     .diaryResponseDto(diaryResponseDto)
                     .build();
 
-            return new BaseResponse<>(bookmarkDetailLyricsResponseDto);
-        } else {
-            throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK);
-        }
-
+        return new BaseResponse<>(bookmarkDetailLyricsResponseDto);
     }
 
+
+    /**
+     * 북마크된 채팅의 노래 추천 상세 정보 조회
+     *
+     * @param email 추천 정보를 요청하는 회원의 이메일
+     * @param songId 북마크된 노래가 연관된 채팅의 ID
+     * @return 북마크된 노래의 추천 정보가 포함된 응답
+     * @throws CustomRuntimeException 회원, 노래, 채팅 또는 북마크를 찾을 수 없을 때 발생
+     */
     public BaseResponse<BookmarkDetailRecommendResponseDto> getDetailBookmarkRecommend(String email, Long songId) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_MEMBER));
-
-        Song song = songRepository.findById(songId)
-                .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_SONG));
-
-        Chat chat = chatRepository.findById(song.getChat().getId())
-                .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_CHAT));
-
+        Member member = getMemberByEmail(email);
+        Song song = getSongById(songId);
+        Chat chat = getChatById(song.getChat().getId());
 
         Bookmark bookmark = bookmarkRepository.findByMemberAndChat(member, chat)
                 .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK));
 
-        ChatResponseDto chatResponseDto = chatService.createChatResponseDto(chat);
+        if (!bookmark.getIsBookmark()) {
+            throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK);
 
-        List<Long> songIds = songService.findSongIdsByChatId(chat.getId());
+        }
+        ChatRecommendResponseDto chatRecommendResponseDto = createChatRecommendResponseDto(chat);
+        DiaryResponseDto diaryResponseDto = createDiaryResponse(chat);
 
-        if (bookmark.getIsBookmark()) {
-            // 파라미터로 받은 chatId에 해당하는 chat을 조회해야함.ChatLyricsResponseDto에 넣어야 함.
-            ChatRecommendResponseDto chatRecommendResponseDto = ChatRecommendResponseDto.builder()
-                    .chatResponseDto(chatResponseDto)
-                    .songId(songIds)
-                    .build();
-
-            // 해당 Chat이 참조하는 Diary를 조회해야함. DiaryResponseDto에 넣어야함.
-            DiaryResponseDto diaryResponseDto = DiaryResponseDto.builder()
-                    .id(chat.getDiary().getId())
-                    .nickName(chat.getDiary().getMember().getNickname())
-                    .createdAt(chat.getDiary().getCreatedAt())
-                    .content(chat.getDiary().getContent())
-                    .build();
-
-            BookmarkDetailRecommendResponseDto bookmarkDetailLyricsResponseDto = BookmarkDetailRecommendResponseDto.builder()
+        BookmarkDetailRecommendResponseDto bookmarkDetailLyricsResponseDto = BookmarkDetailRecommendResponseDto.builder()
                     .id(bookmark.getId())
                     .chatRecommendResponseDto(chatRecommendResponseDto)
                     .diaryResponseDto(diaryResponseDto)
                     .build();
 
-            return new BaseResponse<>(bookmarkDetailLyricsResponseDto);
-        } else {
-            throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK);
-        }
+        return new BaseResponse<>(bookmarkDetailLyricsResponseDto);
+    }
+
+    private ChatRecommendResponseDto createChatRecommendResponseDto(Chat chat) {
+        ChatResponseDto chatResponseDto = chatService.createChatResponseDto(chat);
+        List<Long> songIds = songService.findSongIdsByChatId(chat.getId());
+        return ChatRecommendResponseDto.builder()
+                .chatResponseDto(chatResponseDto)
+                .songId(songIds)
+                .build();
+    }
+
+    private Chat getChatById(Long chatId) {
+        return chatRepository.findById(chatId)
+                .orElseThrow(()-> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_CHAT));
+    }
+
+    private Member getMemberByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_MEMBER));
+    }
+
+    private Song getSongById(Long songId) {
+        return songRepository.findById(songId)
+                .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_SONG));
+    }
+
+    private DiaryResponseDto createDiaryResponse(Chat chat) {
+        return DiaryResponseDto.builder()
+                .id(chat.getDiary().getId())
+                .nickName(chat.getDiary().getMember().getNickname())
+                .createdAt(chat.getDiary().getCreatedAt())
+                .content(chat.getDiary().getContent())
+                .build();
+    }
+
+    private ChatLyricsResponseDto createChatLyricsResponseDto(Chat chat) {
+        ChatResponseDto chatResponseDto = chatService.createChatResponseDto(chat);
+        return ChatLyricsResponseDto.builder()
+                .chatResponseDto(chatResponseDto)
+                .generatedLyrics(chat.getLyrics())
+                .build();
     }
 }
