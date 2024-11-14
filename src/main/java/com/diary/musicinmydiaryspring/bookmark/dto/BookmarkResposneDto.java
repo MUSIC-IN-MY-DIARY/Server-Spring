@@ -2,13 +2,15 @@ package com.diary.musicinmydiaryspring.bookmark.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class BookmarkDetailRequestDto {
-    @JsonProperty("chat_id")
-    private Long chatId;
+@Getter
+@Builder
+@NoArgsConstructor
+public class BookmarkResposneDto {
+    @JsonProperty("is_bookmarked")
+    private Boolean isBookmarked;
 }

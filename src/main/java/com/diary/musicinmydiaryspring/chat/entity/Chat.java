@@ -30,14 +30,11 @@ public class Chat {
     @Column(columnDefinition = "TEXT")
     private String lyrics;
 
-    @Column
-    private Boolean isLiked;
 
     public static Chat createChat(Diary diary) {
         return Chat.builder()
                 .diary(diary)
                 .createdAt(LocalDateTime.now())
-                .isLiked(false)
                 .build();
     }
 
@@ -46,12 +43,8 @@ public class Chat {
                 .diary(diary)
                 .createdAt(LocalDateTime.now())
                 .lyrics(lyrics)
-                .isLiked(false)
                 .build();
     }
 
-    public void updateChatIsLiked() {
-        this.isLiked = !isLiked;
-    }
 
 }

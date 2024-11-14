@@ -9,7 +9,6 @@ import com.diary.musicinmydiaryspring.chat.service.ChatService;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
-import com.diary.musicinmydiaryspring.diary.dto.DiaryListResponseDto;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryRequestDto;
 import com.diary.musicinmydiaryspring.diary.entity.Diary;
 import com.diary.musicinmydiaryspring.diary.repository.DiaryRepository;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

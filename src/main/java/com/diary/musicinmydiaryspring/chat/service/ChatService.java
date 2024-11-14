@@ -1,13 +1,11 @@
 package com.diary.musicinmydiaryspring.chat.service;
 
-import com.diary.musicinmydiaryspring.bookmark.service.BookmarkService;
 import com.diary.musicinmydiaryspring.chat.dto.ChatRequestDto;
 import com.diary.musicinmydiaryspring.chat.dto.ChatResponseDto;
 import com.diary.musicinmydiaryspring.chat.dto.generate.ChatLyricsResponseDto;
 import com.diary.musicinmydiaryspring.chat.dto.recommend.ChatRecommendResponseDto;
 import com.diary.musicinmydiaryspring.chat.entity.Chat;
 import com.diary.musicinmydiaryspring.chat.repository.ChatRepository;
-import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
 import com.diary.musicinmydiaryspring.common.utils.JsonParser;
@@ -37,7 +35,6 @@ public class ChatService {
 
     private final RestClient restClient;
     private final ChatRepository chatRepository;
-    private final BookmarkService bookmarkService;
     private final DiaryRepository diaryRepository;
     private final SongRepository songRepository;
 
@@ -146,7 +143,7 @@ public class ChatService {
                 .id(chat.getId())
                 .diaryId(chat.getDiary().getId())
                 .createdAt(chat.getCreatedAt() != null ? chat.getCreatedAt() : LocalDateTime.now())
-                .isLiked(false)
+                .isBookmarked(false)
                 .build();
     }
 
@@ -186,21 +183,5 @@ public class ChatService {
     }
 
 
-    /**
-     * Chat 엔티티의 isLiked 필드를 true로 업데이트하고 북마크 등록하는 메서드
-     * @param chatId Chat 엔티티의 ID
-     * @return BaseResponse<ChatResponseDto> 응답 객체
-     */
-    @Transactional
-    public BaseResponse<Boolean> updateChatIsLikedStatus(Long chatId) {
-        Chat chat = chatRepository.findById(chatId)
-                .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_CHAT));
-
-        chat.updateChatIsLiked();
-        chatRepository.save(chat);
-        bookmarkService.updateBookmark(chat);
-
-        return new BaseResponse<>(chat.getIsLiked());
-    }
 
 }

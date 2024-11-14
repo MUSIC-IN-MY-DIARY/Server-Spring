@@ -18,7 +18,7 @@ public class ChatResponseDto {
     @JsonProperty("created_at")
     private LocalDateTime createdAt;
 
-    @JsonProperty("is_liked")
-    private Boolean isLiked;
+    @JsonProperty("is_bookmark")
+    private Boolean isBookmarked;
 }
 
