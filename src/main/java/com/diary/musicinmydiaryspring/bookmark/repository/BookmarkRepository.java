@@ -10,7 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
-    Optional<Bookmark> findBookmarkByChatId(Long chatId);
-
     Optional<Bookmark> findByMemberAndChat(Member member, Chat chat);
 }

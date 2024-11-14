@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 @NoArgsConstructor
-public class BookmarkResposneDto {
+public class BookmarkResponseDto {
     @JsonProperty("is_bookmarked")
     private Boolean isBookmarked;
 }

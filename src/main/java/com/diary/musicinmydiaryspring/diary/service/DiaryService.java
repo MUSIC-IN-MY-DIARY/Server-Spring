@@ -2,7 +2,6 @@ package com.diary.musicinmydiaryspring.diary.service;
 
 
 import com.diary.musicinmydiaryspring.chat.dto.ChatRequestDto;
-import com.diary.musicinmydiaryspring.chat.dto.ChatResponseDto;
 import com.diary.musicinmydiaryspring.chat.dto.generate.ChatLyricsResponseDto;
 import com.diary.musicinmydiaryspring.chat.dto.recommend.ChatRecommendResponseDto;
 import com.diary.musicinmydiaryspring.chat.service.ChatService;
@@ -68,7 +67,7 @@ public class DiaryService {
     }
 
     /**
-     * 챗봇을 통해 작사 생성을 요청한다.
+     * 챗봇을 통해 작사 생성을 요청
      *
      * @param diaryRequestDto 일기 요청 데이터
      * @param diaryId         저장된 일기의 ID
