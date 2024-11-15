@@ -14,6 +14,8 @@ import com.diary.musicinmydiaryspring.diary.repository.DiaryRepository;
 import com.diary.musicinmydiaryspring.member.entity.Member;
 import com.diary.musicinmydiaryspring.member.repsitory.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,11 @@ public class DiaryService {
      * @param email           사용자 이메일
      * @return 추천 노래 리스트를 담은 응답 객체
      */
+    @Retryable(
+            retryFor = {java.net.SocketTimeoutException.class},
+            maxAttempts = 3, // 최대 재시도 횟수
+            backoff = @Backoff(delay = 2000) // 재시도 간 대기 시간 2초
+    )
     @Transactional
     public BaseResponse<ChatRecommendResponseDto> recommendSongs(DiaryRequestDto diaryRequestDto, String email) {
         Diary diary = saveDiary(email, diaryRequestDto);
@@ -46,6 +53,11 @@ public class DiaryService {
      * @param email           사용자 이메일
      * @return 생성된 가사를 담은 응답 객체
      */
+    @Retryable(
+            retryFor = {java.net.SocketTimeoutException.class},
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 2000)
+    )
     @Transactional
     public BaseResponse<ChatLyricsResponseDto> generateLyrics(DiaryRequestDto diaryRequestDto, String email) {
         Diary diary = saveDiary(email, diaryRequestDto);

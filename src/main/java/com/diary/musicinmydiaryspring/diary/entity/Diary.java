@@ -30,6 +30,6 @@ public class Diary {
     @Column
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 }

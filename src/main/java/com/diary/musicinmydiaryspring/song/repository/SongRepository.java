@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface SongRepository extends JpaRepository<Song, Long> {
     List<Song> findAllByChatId(Long chatId);
+
+    List<Song> findImageIdsByChatId(Long chatId);
 }

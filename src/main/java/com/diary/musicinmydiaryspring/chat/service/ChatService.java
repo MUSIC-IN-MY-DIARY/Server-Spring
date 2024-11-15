@@ -71,16 +71,16 @@ public class ChatService {
         }
 
         List<Long> songIds = songService.findSongIdsByChatId(chat.getId());
+        List<Long> imageIds = songService.findImageIdsByChatId(chat.getId());
 
         ChatResponseDto chatResponseDto = createChatResponseDto(chat);
 
-        ChatRecommendResponseDto chatRecommendResponseDto = ChatRecommendResponseDto.builder()
+        return ChatRecommendResponseDto.builder()
                 .chatResponseDto(chatResponseDto)
                 .recommendedSongs(recommendResponse.getRecommendedSongs())
                 .songId(songIds)
+                .imageId(imageIds)
                 .build();
-
-        return chatRecommendResponseDto;
     }
 
     /**
@@ -99,12 +99,11 @@ public class ChatService {
         Chat chat = saveChatWithLyrics(diary, lyricsResponse.getGeneratedLyrics());
 
         ChatResponseDto chatResponseDto = createChatResponseDto(chat);
-        ChatLyricsResponseDto chatLyricsResponseDto = ChatLyricsResponseDto.builder()
+
+        return ChatLyricsResponseDto.builder()
                 .chatResponseDto(chatResponseDto)
                 .generatedLyrics(lyricsResponse.getGeneratedLyrics())
                 .build();
-
-        return chatLyricsResponseDto;
     }
 
     /**

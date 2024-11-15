@@ -22,5 +22,8 @@ public class ChatRecommendResponseDto{
     private String recommendedSongs;
 
     @JsonProperty("song_id")
-     private List<Long> songId;
+    private List<Long> songId;
+
+    @JsonProperty("image_id")
+    private List<Long> imageId;
 }
