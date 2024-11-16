@@ -91,11 +91,9 @@ public class BookmarkService {
     public BaseResponse<BookmarkDetailLyricsResponseDto> getDetailBookmarkLyrics(String email, Long chatId) {
         Member member = getMemberByEmail(email);
         Chat chat = getChatById(chatId);
-
+        
         Bookmark bookmark = bookmarkRepository.findByMemberAndChat(member, chat)
                 .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK));
-
-
         if (!bookmark.getIsBookmark()){
             throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK);
         }
@@ -104,14 +102,13 @@ public class BookmarkService {
         DiaryResponseDto diaryResponseDto = createDiaryResponse(chat);
 
         BookmarkDetailLyricsResponseDto bookmarkDetailLyricsResponseDto = BookmarkDetailLyricsResponseDto.builder()
-                    .id(bookmark.getId())
-                    .chatLyricsResponseDto(chatLyricsResponseDto)
-                    .diaryResponseDto(diaryResponseDto)
-                    .build();
+                .id(bookmark.getId())
+                .chatLyricsResponseDto(chatLyricsResponseDto)
+                .diaryResponseDto(diaryResponseDto)
+                .build();
 
         return new BaseResponse<>(bookmarkDetailLyricsResponseDto);
     }
-
 
     /**
      * 북마크된 채팅의 노래 추천 상세 정보 조회
@@ -197,7 +194,6 @@ public class BookmarkService {
         Member member = getMemberByEmail(email);
         
         Page<Bookmark> bookmarkPage = bookmarkRepository.findAllByMemberAndIsBookmarkTrueAndChat_LyricsIsNotNull(member, pageable);
-        System.out.println("작사 추천: "+bookmarkPage);
         
         List<BookmarkAllLyricsResponseDto.BookmarkLyricsDto> bookmarkDtos = bookmarkPage.getContent().stream()
                 .map(bookmark -> BookmarkAllLyricsResponseDto.BookmarkLyricsDto.builder()
@@ -208,12 +204,7 @@ public class BookmarkService {
                         .build())
                 .collect(Collectors.toList());
 
-        PageDto pageInfo = PageDto.builder()
-                .pageSize(pageable.getPageSize())
-                .currentPage(pageable.getPageNumber() + 1)
-                .totalCount(bookmarkPage.getTotalElements())
-                .isLastPage(bookmarkPage.isLast())
-                .build();
+        PageDto pageInfo = createPageInfo(bookmarkPage, pageable);
 
         BookmarkAllLyricsResponseDto responseDto = BookmarkAllLyricsResponseDto.builder()
                 .pageInfo(pageInfo)
@@ -233,7 +224,6 @@ public class BookmarkService {
     public BaseResponse<BookmarkAllRecommendResponseDto> getAllBookmarkRecommend(String email, Pageable pageable) {
         Member member = getMemberByEmail(email);
         Page<Bookmark> bookmarkPage = bookmarkRepository.findAllByMemberAndIsBookmarkTrueAndChat_RecommendIsNotNull(member, pageable);
-        System.out.println("노래 추천: "+bookmarkPage);
 
         List<BookmarkAllRecommendResponseDto.BookmarkRecommendDto> bookmarkDtos = bookmarkPage.getContent().stream()
                 .map(bookmark ->
@@ -251,16 +241,21 @@ public class BookmarkService {
                         }
                 )
                 .toList();
-        PageDto pageInfo = PageDto.builder()
-                .pageSize(pageable.getPageSize())
-                .currentPage(pageable.getPageNumber()+1)
-                .totalCount(bookmarkPage.getTotalElements())
-                .isLastPage(bookmarkPage.isLast())
-                .build();
+        PageDto pageInfo = createPageInfo(bookmarkPage, pageable);
 
         return new BaseResponse<>(BookmarkAllRecommendResponseDto.builder()
                 .pageInfo(pageInfo)
                 .bookmarks(bookmarkDtos)
                 .build());
     }
+
+    private PageDto createPageInfo(Page<?> page, Pageable pageable) {
+        return PageDto.builder()
+                .pageSize(pageable.getPageSize())
+                .currentPage(pageable.getPageNumber() + 1)
+                .totalCount(page.getTotalElements())
+                .isLastPage(page.isLast())
+                .build();
+    }
+
 }
