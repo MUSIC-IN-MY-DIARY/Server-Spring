@@ -98,8 +98,8 @@ public class BookmarkService {
             throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK);
         }
 
-        ChatLyricsResponseDto chatLyricsResponseDto = createChatLyricsResponseDto(chat);
-        DiaryResponseDto diaryResponseDto = createDiaryResponse(chat);
+        ChatLyricsResponseDto chatLyricsResponseDto = createChatLyricsResponseDto(chat, member);
+        DiaryResponseDto diaryResponseDto = createDiaryResponseDto(chat);
 
         BookmarkDetailLyricsResponseDto bookmarkDetailLyricsResponseDto = BookmarkDetailLyricsResponseDto.builder()
                 .id(bookmark.getId())
@@ -130,8 +130,8 @@ public class BookmarkService {
             throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK);
 
         }
-        ChatRecommendResponseDto chatRecommendResponseDto = createChatRecommendResponseDto(chat);
-        DiaryResponseDto diaryResponseDto = createDiaryResponse(chat);
+        ChatRecommendResponseDto chatRecommendResponseDto = createChatRecommendResponseDto(chat, member);
+        DiaryResponseDto diaryResponseDto = createDiaryResponseDto(chat);
 
         BookmarkDetailRecommendResponseDto bookmarkDetailLyricsResponseDto = BookmarkDetailRecommendResponseDto.builder()
                     .id(bookmark.getId())
@@ -142,8 +142,9 @@ public class BookmarkService {
         return new BaseResponse<>(bookmarkDetailLyricsResponseDto);
     }
 
-    private ChatRecommendResponseDto createChatRecommendResponseDto(Chat chat) {
-        ChatResponseDto chatResponseDto = chatService.createChatResponseDto(chat);
+    private ChatRecommendResponseDto createChatRecommendResponseDto(Chat chat, Member member) {
+        boolean isBookmarked = getBookmarkStatus(member, chat);
+        ChatResponseDto chatResponseDto = chatService.createChatResponseDto(chat, isBookmarked);
         List<Long> songIds = songService.findSongIdsByChatId(chat.getId());
         return ChatRecommendResponseDto.builder()
                 .chatResponseDto(chatResponseDto)
@@ -166,7 +167,7 @@ public class BookmarkService {
                 .orElseThrow(() -> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_SONG));
     }
 
-    private DiaryResponseDto createDiaryResponse(Chat chat) {
+    private DiaryResponseDto createDiaryResponseDto(Chat chat) {
         return DiaryResponseDto.builder()
                 .id(chat.getDiary().getId())
                 .nickName(chat.getDiary().getMember().getNickname())
@@ -175,8 +176,21 @@ public class BookmarkService {
                 .build();
     }
 
-    private ChatLyricsResponseDto createChatLyricsResponseDto(Chat chat) {
-        ChatResponseDto chatResponseDto = chatService.createChatResponseDto(chat);
+    /**
+     * 북마크 상태 조회 메서드
+     *
+     * @param chat 조회할 Chat
+     * @param member 조회할 Member
+     * */
+    private boolean getBookmarkStatus(Member member, Chat chat){
+        return bookmarkRepository.findByMemberAndChat(member, chat)
+                .map(Bookmark::getIsBookmark)
+                .orElse(false);
+    }
+
+    private ChatLyricsResponseDto createChatLyricsResponseDto(Chat chat, Member member) {
+        boolean isBookmarked = getBookmarkStatus(member, chat);
+        ChatResponseDto chatResponseDto = chatService.createChatResponseDto(chat, isBookmarked);
         return ChatLyricsResponseDto.builder()
                 .chatResponseDto(chatResponseDto)
                 .generatedLyrics(chat.getLyrics())

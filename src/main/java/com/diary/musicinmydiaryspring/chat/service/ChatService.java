@@ -1,5 +1,6 @@
 package com.diary.musicinmydiaryspring.chat.service;
 
+import com.diary.musicinmydiaryspring.bookmark.repository.BookmarkRepository;
 import com.diary.musicinmydiaryspring.chat.dto.ChatRequestDto;
 import com.diary.musicinmydiaryspring.chat.dto.ChatResponseDto;
 import com.diary.musicinmydiaryspring.chat.dto.generate.ChatLyricsResponseDto;
@@ -42,6 +43,7 @@ public class ChatService {
     private static final String RECOMMEND_URL = "https://diary-music.o-r.kr/api/recommend/";
     private static final String LYRICS_URL = "https://diary-music.o-r.kr/api/generate/";
     private final SongService songService;
+    private final BookmarkRepository bookmarkRepository;
 
     /**
      * 모델 서버에 노래 추천 요청을 보내고 결과를 저장
@@ -73,7 +75,7 @@ public class ChatService {
         List<Long> songIds = songService.findSongIdsByChatId(chat.getId());
         List<Long> imageIds = songService.findImageIdsByChatId(chat.getId());
 
-        ChatResponseDto chatResponseDto = createChatResponseDto(chat);
+        ChatResponseDto chatResponseDto = createChatResponseDto(chat, false);
 
         return ChatRecommendResponseDto.builder()
                 .chatResponseDto(chatResponseDto)
@@ -98,7 +100,7 @@ public class ChatService {
         Diary diary = findDiaryById(diaryId);
         Chat chat = saveChatWithLyrics(diary, lyricsResponse.getGeneratedLyrics());
 
-        ChatResponseDto chatResponseDto = createChatResponseDto(chat);
+        ChatResponseDto chatResponseDto = createChatResponseDto(chat, false);
 
         return ChatLyricsResponseDto.builder()
                 .chatResponseDto(chatResponseDto)
@@ -137,12 +139,12 @@ public class ChatService {
      * @param chat Chat 엔티티
      * @return ChatResponseDto 생성된 Chat 응답 객체
      */
-    public ChatResponseDto createChatResponseDto(Chat chat){
+    public ChatResponseDto createChatResponseDto(Chat chat, boolean isBookmarked){
         return ChatResponseDto.builder()
                 .id(chat.getId())
                 .diaryId(chat.getDiary().getId())
                 .createdAt(chat.getCreatedAt() != null ? chat.getCreatedAt() : LocalDateTime.now())
-                .isBookmarked(false)
+                .isBookmarked(isBookmarked)
                 .build();
     }
 
