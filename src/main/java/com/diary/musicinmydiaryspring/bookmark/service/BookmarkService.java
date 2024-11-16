@@ -1,9 +1,6 @@
 package com.diary.musicinmydiaryspring.bookmark.service;
 
-import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkAllLyricsResponseDto;
-import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkDetailLyricsResponseDto;
-import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkDetailRecommendResponseDto;
-import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkResponseDto;
+import com.diary.musicinmydiaryspring.bookmark.dto.*;
 import com.diary.musicinmydiaryspring.bookmark.entity.Bookmark;
 import com.diary.musicinmydiaryspring.bookmark.repository.BookmarkRepository;
 import com.diary.musicinmydiaryspring.chat.dto.ChatResponseDto;
@@ -194,12 +191,13 @@ public class BookmarkService {
      * 
      * @param email 조회를 요청하는 회원의 이메일
      * @param pageable 페이지 정보
-x     * @return 북마크된 작사 목록이 포함된 응답
+     * @return 북마크된 작사 목록이 포함된 응답
      */
     public BaseResponse<BookmarkAllLyricsResponseDto> getAllBookmarkLyrics(String email, Pageable pageable) {
         Member member = getMemberByEmail(email);
         
         Page<Bookmark> bookmarkPage = bookmarkRepository.findAllByMemberAndIsBookmarkTrueAndChat_LyricsIsNotNull(member, pageable);
+        System.out.println("작사 추천: "+bookmarkPage);
         
         List<BookmarkAllLyricsResponseDto.BookmarkLyricsDto> bookmarkDtos = bookmarkPage.getContent().stream()
                 .map(bookmark -> BookmarkAllLyricsResponseDto.BookmarkLyricsDto.builder()
@@ -223,5 +221,46 @@ x     * @return 북마크된 작사 목록이 포함된 응답
                 .build();
 
         return new BaseResponse<>(responseDto);
+    }
+
+    /**
+     * 북마크된 노래 추천 목록 조회
+     *
+     * @param email 조회를 요청하는 회원의 이메일
+     * @param pageable 페이지 정보
+     * @return 북마크된 노래 추천 목록이 포함된 응답
+     */
+    public BaseResponse<BookmarkAllRecommendResponseDto> getAllBookmarkRecommend(String email, Pageable pageable) {
+        Member member = getMemberByEmail(email);
+        Page<Bookmark> bookmarkPage = bookmarkRepository.findAllByMemberAndIsBookmarkTrueAndChat_RecommendIsNotNull(member, pageable);
+        System.out.println("노래 추천: "+bookmarkPage);
+
+        List<BookmarkAllRecommendResponseDto.BookmarkRecommendDto> bookmarkDtos = bookmarkPage.getContent().stream()
+                .map(bookmark ->
+                        {
+                            List<Long> songIds = songRepository.findAllByChatId(bookmark.getChat().getId())
+                                    .stream()
+                                    .map(Song::getId)
+                                    .toList();
+
+                            return BookmarkAllRecommendResponseDto.BookmarkRecommendDto.builder()
+                                    .diaryId(bookmark.getChat().getDiary().getId())
+                                    .songIds(songIds)
+                                    .diaryContent(bookmark.getChat().getDiary().getContent())
+                                    .build();
+                        }
+                )
+                .toList();
+        PageDto pageInfo = PageDto.builder()
+                .pageSize(pageable.getPageSize())
+                .currentPage(pageable.getPageNumber()+1)
+                .totalCount(bookmarkPage.getTotalElements())
+                .isLastPage(bookmarkPage.isLast())
+                .build();
+
+        return new BaseResponse<>(BookmarkAllRecommendResponseDto.builder()
+                .pageInfo(pageInfo)
+                .bookmarks(bookmarkDtos)
+                .build());
     }
 }

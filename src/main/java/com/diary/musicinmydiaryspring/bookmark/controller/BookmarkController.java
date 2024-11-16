@@ -1,9 +1,6 @@
 package com.diary.musicinmydiaryspring.bookmark.controller;
 
-import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkAllLyricsResponseDto;
-import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkDetailLyricsResponseDto;
-import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkDetailRecommendResponseDto;
-import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkResponseDto;
+import com.diary.musicinmydiaryspring.bookmark.dto.*;
 import com.diary.musicinmydiaryspring.bookmark.service.BookmarkService;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -56,6 +53,15 @@ public class BookmarkController {
     ) {
         String email = principal.getName();
         return bookmarkService.getAllBookmarkLyrics(email, pageable);
+    }
+
+    @GetMapping("/all/recommend-songs")
+    public BaseResponse<BookmarkAllRecommendResponseDto> getAllBookmarkRecommend(
+            @PageableDefault(size=3) Pageable pageable,
+            Principal principal
+    ){
+        String email = principal.getName();
+        return bookmarkService.getAllBookmarkRecommend(email, pageable);
     }
 
 }
