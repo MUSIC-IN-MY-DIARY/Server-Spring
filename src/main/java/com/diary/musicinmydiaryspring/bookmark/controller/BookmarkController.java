@@ -1,11 +1,14 @@
 package com.diary.musicinmydiaryspring.bookmark.controller;
 
+import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkAllLyricsResponseDto;
 import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkDetailLyricsResponseDto;
 import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkDetailRecommendResponseDto;
 import com.diary.musicinmydiaryspring.bookmark.dto.BookmarkResponseDto;
 import com.diary.musicinmydiaryspring.bookmark.service.BookmarkService;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -27,7 +30,6 @@ public class BookmarkController {
     }
 
 
-    // 1. 가사 만든 경우엔 Chat 테이블을 뒤져야 함
     @GetMapping("/detail/generate-lyrics")
     public BaseResponse<BookmarkDetailLyricsResponseDto> getDetailBookmarkLyrics(
             @RequestParam Long chatId,
@@ -38,7 +40,6 @@ public class BookmarkController {
 
     }
 
-    // 2. 노래 추천 받은 경우엔 Song 테이블을 뒤져야 함
     @GetMapping("/detail/recommend-songs")
     public BaseResponse<BookmarkDetailRecommendResponseDto> getDetailBookmarkRecommend(
             @RequestParam Long songId,
@@ -48,8 +49,13 @@ public class BookmarkController {
         return bookmarkService.getDetailBookmarkRecommend(email, songId);
     }
 
-
-
-
+    @GetMapping("/all/generate-lyrics")
+    public BaseResponse<BookmarkAllLyricsResponseDto> getAllBookmarkLyrics(
+            @PageableDefault(size = 3) Pageable pageable,
+            Principal principal
+    ) {
+        String email = principal.getName();
+        return bookmarkService.getAllBookmarkLyrics(email, pageable);
+    }
 
 }
