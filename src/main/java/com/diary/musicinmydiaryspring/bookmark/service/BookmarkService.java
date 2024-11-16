@@ -16,6 +16,7 @@ import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
 import com.diary.musicinmydiaryspring.diary.dto.DiaryResponseDto;
 import com.diary.musicinmydiaryspring.member.entity.Member;
 import com.diary.musicinmydiaryspring.member.repsitory.MemberRepository;
+import com.diary.musicinmydiaryspring.song.dto.SongResponseDto;
 import com.diary.musicinmydiaryspring.song.entity.Song;
 import com.diary.musicinmydiaryspring.song.repository.SongRepository;
 import com.diary.musicinmydiaryspring.song.service.SongService;
@@ -132,14 +133,26 @@ public class BookmarkService {
         }
         ChatRecommendResponseDto chatRecommendResponseDto = createChatRecommendResponseDto(chat, member);
         DiaryResponseDto diaryResponseDto = createDiaryResponseDto(chat);
+        SongResponseDto songResponseDto = createSongResponseDto(song);
 
         BookmarkDetailRecommendResponseDto bookmarkDetailLyricsResponseDto = BookmarkDetailRecommendResponseDto.builder()
                     .id(bookmark.getId())
                     .chatRecommendResponseDto(chatRecommendResponseDto)
+                    .songResponseDto(songResponseDto)
                     .diaryResponseDto(diaryResponseDto)
                     .build();
 
         return new BaseResponse<>(bookmarkDetailLyricsResponseDto);
+    }
+
+    private SongResponseDto createSongResponseDto(Song song) {
+        new SongResponseDto();
+        return SongResponseDto.builder()
+                .songTitle(song.getSongTitle())
+                .artist(song.getArtist())
+                .genre(song.getGenre())
+                .imageId(song.getImageId())
+                .build();
     }
 
     private ChatRecommendResponseDto createChatRecommendResponseDto(Chat chat, Member member) {
