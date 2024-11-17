@@ -1,6 +1,7 @@
 package com.diary.musicinmydiaryspring.member.controller;
 
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
+import com.diary.musicinmydiaryspring.member.dto.MemberInfoResponseDto;
 import com.diary.musicinmydiaryspring.member.dto.MemberResponseDto;
 import com.diary.musicinmydiaryspring.member.dto.MemberRequestDto;
 
@@ -28,5 +29,13 @@ public class MemberController {
     ){
         String email = principal.getName();
         return memberService.verifyMember(email);
+    }
+
+    @GetMapping("/info")
+    public BaseResponse<MemberInfoResponseDto> provideMemberInfo(
+            Principal principal
+    ){
+        String email = principal.getName();
+        return memberService.provideMemberInfo(email);
     }
 }
