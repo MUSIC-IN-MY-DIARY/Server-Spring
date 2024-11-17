@@ -38,4 +38,13 @@ public class MemberController {
         String email = principal.getName();
         return memberService.provideMemberInfo(email);
     }
+
+    @PostMapping("/logout")
+    public BaseResponse<Void> logout(
+            Principal principal
+    ){
+        String email = principal.getName();
+        return memberService.logout(email);
+    }
+
 }
