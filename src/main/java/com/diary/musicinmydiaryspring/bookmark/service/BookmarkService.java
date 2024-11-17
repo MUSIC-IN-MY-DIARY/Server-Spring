@@ -255,9 +255,14 @@ public class BookmarkService {
                                     .map(Song::getId)
                                     .toList();
 
+                            List<String> songTitles = songRepository.findAllByChatId(bookmark.getChat().getId()).stream()
+                                    .map(Song::getSongTitle)
+                                    .toList();
+
                             return BookmarkAllRecommendResponseDto.BookmarkRecommendDto.builder()
                                     .diaryId(bookmark.getChat().getDiary().getId())
                                     .songIds(songIds)
+                                    .songTitles(songTitles)
                                     .diaryContent(bookmark.getChat().getDiary().getContent())
                                     .build();
                         }

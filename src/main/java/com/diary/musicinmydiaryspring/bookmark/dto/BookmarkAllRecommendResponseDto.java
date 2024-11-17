@@ -16,6 +16,7 @@ public class BookmarkAllRecommendResponseDto {
     @Builder
     public static class BookmarkRecommendDto{
         private List<Long> songIds;
+        private List<String> songTitles;
         private Long diaryId;
         private String diaryContent;
     }

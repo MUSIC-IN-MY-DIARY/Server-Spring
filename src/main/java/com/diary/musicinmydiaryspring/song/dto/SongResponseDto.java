@@ -11,10 +11,9 @@ import lombok.*;
 public class SongResponseDto {
     @JsonProperty("song_id")
     private Long id;
-
-    @JsonProperty("image_id")
-    private Long imageId;
-
+//
+//    @JsonProperty("image_id")
+//    private Long imageId;
     @JsonProperty("artist")
     private String artist;
 
