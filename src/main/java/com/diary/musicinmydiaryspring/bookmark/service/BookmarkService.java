@@ -5,7 +5,6 @@ import com.diary.musicinmydiaryspring.bookmark.entity.Bookmark;
 import com.diary.musicinmydiaryspring.bookmark.repository.BookmarkRepository;
 import com.diary.musicinmydiaryspring.chat.dto.ChatResponseDto;
 import com.diary.musicinmydiaryspring.chat.dto.generate.ChatLyricsResponseDto;
-import com.diary.musicinmydiaryspring.chat.dto.recommend.ChatRecommendResponseDto;
 import com.diary.musicinmydiaryspring.chat.entity.Chat;
 import com.diary.musicinmydiaryspring.chat.repository.ChatRepository;
 import com.diary.musicinmydiaryspring.chat.service.ChatService;
@@ -19,13 +18,13 @@ import com.diary.musicinmydiaryspring.member.repsitory.MemberRepository;
 import com.diary.musicinmydiaryspring.song.dto.SongResponseDto;
 import com.diary.musicinmydiaryspring.song.entity.Song;
 import com.diary.musicinmydiaryspring.song.repository.SongRepository;
-import com.diary.musicinmydiaryspring.song.service.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,7 +36,6 @@ public class BookmarkService {
     private final ChatRepository chatRepository;
     private final ChatService chatService;
     private final SongRepository songRepository;
-    private final SongService songService;
 
     /**
      * 특정 채팅에 대해 북마크 상태 업데이트
@@ -131,13 +129,15 @@ public class BookmarkService {
             throw new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_BOOKMARK);
 
         }
-        ChatRecommendResponseDto chatRecommendResponseDto = createChatRecommendResponseDto(chat, member);
         DiaryResponseDto diaryResponseDto = createDiaryResponseDto(chat);
-        SongResponseDto songResponseDto = createSongResponseDto(song);
+
+        List<Long> songIds = songRepository.findAllByChatId(chat.getId()).stream()
+                .map(Song::getId)
+                .toList();
+        List<SongResponseDto> songResponseDto = createSongResponseDto(songIds);
 
         BookmarkDetailRecommendResponseDto bookmarkDetailLyricsResponseDto = BookmarkDetailRecommendResponseDto.builder()
                     .id(bookmark.getId())
-                    .chatRecommendResponseDto(chatRecommendResponseDto)
                     .songResponseDto(songResponseDto)
                     .diaryResponseDto(diaryResponseDto)
                     .build();
@@ -145,24 +145,20 @@ public class BookmarkService {
         return new BaseResponse<>(bookmarkDetailLyricsResponseDto);
     }
 
-    private SongResponseDto createSongResponseDto(Song song) {
-        new SongResponseDto();
-        return SongResponseDto.builder()
-                .songTitle(song.getSongTitle())
-                .artist(song.getArtist())
-                .genre(song.getGenre())
-                .imageId(song.getImageId())
-                .build();
-    }
-
-    private ChatRecommendResponseDto createChatRecommendResponseDto(Chat chat, Member member) {
-        boolean isBookmarked = getBookmarkStatus(member, chat);
-        ChatResponseDto chatResponseDto = chatService.createChatResponseDto(chat, isBookmarked);
-        List<Long> songIds = songService.findSongIdsByChatId(chat.getId());
-        return ChatRecommendResponseDto.builder()
-                .chatResponseDto(chatResponseDto)
-                .songId(songIds)
-                .build();
+    private List<SongResponseDto> createSongResponseDto(List<Long> songIds) {
+        List<Song> songs = songRepository.findAllById(songIds);
+        List<SongResponseDto> songResponseDtoList = new ArrayList<>();
+        for (Song song : songs) {
+            SongResponseDto songResponseDto = SongResponseDto.builder()
+                    .id(song.getId())
+                    .songTitle(song.getSongTitle())
+                    .artist(song.getArtist())
+                    .genre(song.getGenre())
+                    .imageId(song.getImageId())
+                    .build();
+            songResponseDtoList.add(songResponseDto);
+        }
+        return songResponseDtoList;
     }
 
     private Chat getChatById(Long chatId) {

@@ -10,6 +10,9 @@ import lombok.*;
 @NoArgsConstructor
 public class SongResponseDto {
     @JsonProperty("song_id")
+    private Long id;
+
+    @JsonProperty("image_id")
     private Long imageId;
 
     @JsonProperty("artist")

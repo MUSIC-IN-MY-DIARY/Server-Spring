@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @Getter
 @AllArgsConstructor
@@ -17,11 +19,8 @@ public class BookmarkDetailRecommendResponseDto {
     @JsonProperty("bookmark_id")
     private Long id;
 
-    @JsonProperty("chat")
-    private ChatRecommendResponseDto chatRecommendResponseDto;
-
-    @JsonProperty("song")
-    private SongResponseDto songResponseDto;
+    @JsonProperty("songs")
+    private List<SongResponseDto> songResponseDto;
 
     @JsonProperty("diary")
     private DiaryResponseDto diaryResponseDto;
