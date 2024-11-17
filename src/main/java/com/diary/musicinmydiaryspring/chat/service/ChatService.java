@@ -55,8 +55,10 @@ public class ChatService {
     @Transactional
     public ChatRecommendResponseDto requestAndSaveChatRecommendSongs(ChatRequestDto recommendRequestDto, Long diaryId){
         ChatRecommendResponseDto recommendResponse = postRequest(RECOMMEND_URL, recommendRequestDto, ChatRecommendResponseDto.class);
+
         String beforeParsingJsonData = recommendResponse.getRecommendedSongs();
         List<SongResponseDto> songResponseDtos = JsonParser.parseSongList(beforeParsingJsonData);
+
 
         Diary diary = findDiaryById(diaryId);
         Chat chat = saveChatWithSongs(diary);
@@ -66,14 +68,13 @@ public class ChatService {
                     chat,
                     songResponseDto.getArtist(),
                     songResponseDto.getSongTitle(),
-                    songResponseDto.getGenre(),
-                    songResponseDto.getImageId()
+                    songResponseDto.getGenre()
                     );
+
             songRepository.save(song);
         }
 
         List<Long> songIds = songService.findSongIdsByChatId(chat.getId());
-        List<Long> imageIds = songService.findImageIdsByChatId(chat.getId());
 
         ChatResponseDto chatResponseDto = createChatResponseDto(chat, false);
 
@@ -81,7 +82,6 @@ public class ChatService {
                 .chatResponseDto(chatResponseDto)
                 .recommendedSongs(recommendResponse.getRecommendedSongs())
                 .songId(songIds)
-                .imageId(imageIds)
                 .build();
     }
 

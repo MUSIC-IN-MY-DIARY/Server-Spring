@@ -23,10 +23,4 @@ public class SongService {
                 .toList();
     }
 
-    public List<Long> findImageIdsByChatId(Long chatId) {
-        return songRepository.findImageIdsByChatId(chatId)
-                .stream()
-                .map(Song::getImageId)
-                .toList();
-    }
 }

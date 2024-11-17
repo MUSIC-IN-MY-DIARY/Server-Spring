@@ -3,6 +3,7 @@ package com.diary.musicinmydiaryspring.member.service;
 import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.common.response.BaseResponseStatus;
 import com.diary.musicinmydiaryspring.common.response.CustomRuntimeException;
+import com.diary.musicinmydiaryspring.member.dto.MemberInfoResponseDto;
 import com.diary.musicinmydiaryspring.member.dto.MemberResponseDto;
 import com.diary.musicinmydiaryspring.member.dto.MemberRequestDto;
 import com.diary.musicinmydiaryspring.member.entity.Member;
@@ -55,6 +56,15 @@ public class MemberService {
         return new BaseResponse<>(MemberResponseDto.builder()
                 .id(member.getId())
                 .email(member.getEmail())
+                .nickname(member.getNickname())
+                .build());
+    }
+
+    public BaseResponse<MemberInfoResponseDto> provideMemberInfo(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(()-> new CustomRuntimeException(BaseResponseStatus.NOT_FOUND_MEMBER));
+
+        return new BaseResponse<>(MemberInfoResponseDto.builder()
                 .nickname(member.getNickname())
                 .build());
     }

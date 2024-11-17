@@ -28,16 +28,13 @@ public class Song {
     @Column(nullable = false)
     private String genre;
 
-    @Column(nullable = false)
-    private Long imageId;
 
-    public static Song createSongWithChat(Chat chat, String artist, String songTitle, String genre, Long imageId){
+    public static Song createSongWithChat(Chat chat, String artist, String songTitle, String genre){
         return Song.builder()
                 .chat(chat)
                 .artist(artist)
                 .songTitle(songTitle)
                 .genre(genre)
-                .imageId(imageId)
                 .build();
     }
 }

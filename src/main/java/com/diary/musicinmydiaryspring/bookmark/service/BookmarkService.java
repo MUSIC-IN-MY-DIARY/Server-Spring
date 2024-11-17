@@ -154,7 +154,6 @@ public class BookmarkService {
                     .songTitle(song.getSongTitle())
                     .artist(song.getArtist())
                     .genre(song.getGenre())
-                    .imageId(song.getImageId())
                     .build();
             songResponseDtoList.add(songResponseDto);
         }
