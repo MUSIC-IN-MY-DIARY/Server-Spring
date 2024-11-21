@@ -41,13 +41,21 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-aop' // Retry와 AOP를 위한 의존성
 
 
-    // etc
+    // lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // Spring Boot Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    // Database
     runtimeOnly 'org.postgresql:postgresql'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Servlet API
     implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
 }
 
