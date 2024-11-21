@@ -13,7 +13,7 @@ import static com.diary.musicinmydiaryspring.common.response.BaseResponseStatus.
 @JsonPropertyOrder({"isSuccess","code","message","result"})
 public class BaseResponse<T> {
     @JsonProperty("isSuccess")
-    private final boolean isSuccess;
+    private final Boolean isSuccess;
 
     @JsonProperty("code")
     private final int code;

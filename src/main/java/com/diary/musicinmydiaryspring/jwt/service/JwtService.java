@@ -40,7 +40,6 @@ public class JwtService {
         Token token = Token.of(memberRepository.findById(memberId).orElseThrow(), jwt);
         tokenRepository.findByMemberId(memberId).ifPresent(existingToken -> tokenRepository.delete(existingToken));
         tokenRepository.save(token);
-
         return jwt;
     }
 

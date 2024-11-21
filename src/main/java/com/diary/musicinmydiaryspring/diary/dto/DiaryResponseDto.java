@@ -25,7 +25,4 @@ public class DiaryResponseDto {
 
     @JsonProperty("diary_content")
     private String content;
-
-    @JsonProperty("chat_response")
-    private String chatResponse;
 }

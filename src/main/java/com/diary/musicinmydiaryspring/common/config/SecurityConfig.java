@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(((auth)-> auth.disable()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers(getWhiteListUris()).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterAt(

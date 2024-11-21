@@ -1,6 +1,8 @@
 package com.diary.musicinmydiaryspring.common.filter;
 
+import com.diary.musicinmydiaryspring.common.response.BaseResponse;
 import com.diary.musicinmydiaryspring.jwt.service.JwtService;
+import com.diary.musicinmydiaryspring.member.dto.MemberResponseDto;
 import com.diary.musicinmydiaryspring.member.entity.Member;
 import com.diary.musicinmydiaryspring.member.service.MemberService;
 import com.diary.musicinmydiaryspring.jwt.Jwt;
@@ -22,8 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
 
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
@@ -62,7 +62,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         Jwt token = jwtService.createTokens(member.getId());
         addJwtToCookie(response, token.getAccessToken(), "accessToken");
 
-        sendMemberLoginResponse(response, HttpStatus.OK);
+        MemberResponseDto memberResponseDto = MemberResponseDto.builder()
+                .id(member.getId())
+                .email(member.getEmail())
+                .nickname(member.getNickname())
+                .build();
+
+        BaseResponse<MemberResponseDto> memberResult = new BaseResponse<>(memberResponseDto);
+        sendMemberLoginResponse(response, HttpStatus.OK, memberResult);
     }
 
     /**
@@ -80,12 +87,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     /**
      * Login 성공/실패 시 메세지 보내는 메서드
      * */
-    private void sendMemberLoginResponse(HttpServletResponse response, HttpStatus status) throws IOException{
-        Map<String, String> messageMap = new HashMap<>();
-        response.setContentType("application/json;charet=UTF-8");
+    private void sendMemberLoginResponse(
+            HttpServletResponse response,
+            HttpStatus status,
+            BaseResponse<?> baseResponse) throws IOException{
+        response.setContentType("application/json;charset=UTF-8");
         response.setStatus(status.value());
+
         PrintWriter out = response.getWriter();
-        out.print(new ObjectMapper().writeValueAsString(messageMap));
+        out.print(new ObjectMapper().writeValueAsString(baseResponse));
         out.flush();
     }
 
@@ -95,7 +105,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     public void addJwtToCookie(HttpServletResponse response, String jwtToken, String cookieName){
         Cookie cookie = new Cookie(cookieName, jwtToken);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
         cookie.setMaxAge(60*120);
         response.addCookie(cookie);

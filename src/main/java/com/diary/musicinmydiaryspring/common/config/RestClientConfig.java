@@ -14,29 +14,42 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestClientConfig {
 
-    private static final int READ_TIMEOUT = 1500;
-    private static final int CONNECT_TIMEOUT = 3000;
+    private static final int CONNECT_TIMEOUT = 10000; // 연결 타임아웃
+    private static final int BASE_READ_TIMEOUT = 9000; // 기본 읽기 타임아웃
+    private static final int MAX_READ_TIMEOUT = 30000; // 최대 읽기 타임아웃
+    private static final int LENGTH_FACTOR = 100; // 요청 길이에 따른 증가량 (ms)
 
     @Bean
     public RestTemplate restTemplate() {
+        return createRestTemplate(BASE_READ_TIMEOUT);
+    }
+
+    public RestTemplate restTemplateForRequest(String request) {
+        int dynamicReadTimeout = calculateDynamicTimeout(request);
+        return createRestTemplate(dynamicReadTimeout);
+    }
+
+    private RestTemplate createRestTemplate(int readTimeout) {
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-        factory.setHttpClient(createHttpClient());
+        factory.setHttpClient(createHttpClient(readTimeout));
         return new RestTemplate(factory);
     }
 
-    // HttpClient 생성 메서드
-    private CloseableHttpClient createHttpClient() {
-        // 요청 설정에 대한 타임아웃 값 설정
+    private CloseableHttpClient createHttpClient(int readTimeout) {
         RequestConfig config = RequestConfig.custom()
                 .setConnectionRequestTimeout(Timeout.ofMilliseconds(CONNECT_TIMEOUT))
-                .setResponseTimeout(Timeout.ofMilliseconds(READ_TIMEOUT))
+                .setResponseTimeout(Timeout.ofMilliseconds(readTimeout))
                 .build();
 
-        // HttpClient 생성 및 설정
         return HttpClients.custom()
                 .setDefaultRequestConfig(config)
                 .setConnectionManager(new PoolingHttpClientConnectionManager())
                 .build();
+    }
+
+    private int calculateDynamicTimeout(String request) {
+        int additionalTimeout = request.length() * LENGTH_FACTOR;
+        return Math.min(BASE_READ_TIMEOUT + additionalTimeout, MAX_READ_TIMEOUT);
     }
 
     @Bean

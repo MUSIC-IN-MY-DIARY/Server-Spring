@@ -1,15 +1,22 @@
 package com.diary.musicinmydiaryspring.chat.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@Data
+@Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChatRequestDto {
-    @JsonProperty("diary_content")
+    @JsonProperty("diaryContent")
     private String diaryContent;
+
+    public static ChatRequestDto of(String content) {
+        return ChatRequestDto.builder()
+                .diaryContent(content)
+                .build();
+    }
 }

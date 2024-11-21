@@ -1,24 +1,24 @@
 package com.diary.musicinmydiaryspring.song.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class SongResponseDto {
     @JsonProperty("song_id")
     private Long id;
-
-    @JsonProperty("album_title")
-    private String albumTitle;
-
+//
+//    @JsonProperty("image_id")
+//    private Long imageId;
     @JsonProperty("artist")
     private String artist;
 
     @JsonProperty("song_title")
     private String songTitle;
-
-    @JsonProperty("lyrics")
-    private String lyrics;
 
     @JsonProperty("genre")
     private String genre;

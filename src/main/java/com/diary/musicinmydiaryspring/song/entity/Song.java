@@ -1,22 +1,23 @@
 package com.diary.musicinmydiaryspring.song.entity;
 
+import com.diary.musicinmydiaryspring.chat.entity.Chat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@Data
+@Getter
 @Table(name="song")
 public class Song {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String albumTitle;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 
     @Column(nullable = false)
     private String artist;
@@ -25,8 +26,15 @@ public class Song {
     private String songTitle;
 
     @Column(nullable = false)
-    private String lyrics;
-
-    @Column(nullable = false)
     private String genre;
+
+
+    public static Song createSongWithChat(Chat chat, String artist, String songTitle, String genre){
+        return Song.builder()
+                .chat(chat)
+                .artist(artist)
+                .songTitle(songTitle)
+                .genre(genre)
+                .build();
+    }
 }
