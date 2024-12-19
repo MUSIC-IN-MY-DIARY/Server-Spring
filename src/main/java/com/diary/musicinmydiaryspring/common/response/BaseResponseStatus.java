@@ -54,7 +54,7 @@ public enum BaseResponseStatus {
      * 429: 너무 많은 요청
      * */
 
-    TOO_MANY_REQUESTS(false, HttpStatus.TOO_MANY_REQUESTS.value(), "요청이 너무 많습니다. 잠시 후 다시 시도해 주세요."),
+    TOO_MANY_REQUESTS(false, HttpStatus.TOO_MANY_REQUESTS.value(), "너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요."),
 
 
     /**
