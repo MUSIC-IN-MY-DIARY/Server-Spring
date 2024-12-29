@@ -22,8 +22,9 @@ jobs:
 
       - name: Create application-release.yml from secret
         run: |
-          mkdir -p ./src/main/resources
-          echo '${{ secrets.APPLICATION }}' | base64 -d > ./src/main/resources/application-release.yml
+          cd ./src/main/resources
+          touch ./application-release.yml
+          echo "${{ secrets.APPLICATION }}" >> ./application-release.yml
         shell: bash
 
       - name: Grant execute permission for gradlew
