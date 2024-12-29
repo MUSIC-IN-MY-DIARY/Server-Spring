@@ -40,8 +40,8 @@ public class ChatService {
     private final SongRepository songRepository;
 
 
-    private static final String RECOMMEND_URL = "https://diary-music.o-r.kr/api/recommend/";
-    private static final String LYRICS_URL = "https://diary-music.o-r.kr/api/generate/";
+    private static final String RECOMMEND_URL = "http://localhost:8000/api/recommend";
+    private static final String LYRICS_URL = "http://localhost:8000/api/generate";
     private final SongService songService;
     private final BookmarkRepository bookmarkRepository;
 
