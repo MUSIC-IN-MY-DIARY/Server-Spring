@@ -22,7 +22,6 @@ jobs:
 
       - name: Create application-release.yml from secret
         run: |
-          mkdir -p ./src/main/resources
           cd ./src/main/resources
           touch ./application-release.yml
           echo "${{ secrets.APPLICATION }}" >> ./application-release.yml
