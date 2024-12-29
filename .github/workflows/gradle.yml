@@ -2,7 +2,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ "release" ]
+    branches: ['release']
 
 permissions:
   contents: read
@@ -22,6 +22,7 @@ jobs:
 
       - name: Create application-release.yml from secret
         run: |
+          mkdir -p ./src/main/resources
           cd ./src/main/resources
           touch ./application-release.yml
           echo "${{ secrets.APPLICATION }}" >> ./application-release.yml
@@ -53,8 +54,8 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
-          source: "./docker-compose.yml"
-          target: "/home/ubuntu"  # EC2 서버의 적절한 경로로 지정
+          source: './docker-compose.yml'
+          target: '/home/ubuntu' # EC2 서버의 적절한 경로로 지정
 
       ## docker compose up
       - name: executing remote ssh commands using password
