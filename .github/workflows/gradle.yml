@@ -48,13 +48,13 @@ jobs:
         run: docker push ${{ secrets.DOCKER_USERNAME }}/mimd:latest
 
       # docker-compose.yml 파일을 서버로 전송
-      - name: Send docker-compose.ymlghm
+      - name: Send docker-compose.yml
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ubuntu
           key: ${{ secrets.KEY }}
-          source: './docker-compose.yml'
+          source: './docker-compose.yaml'
           target: '/home/ubuntu' # EC2 서버의 적절한 경로로 지정
 
       ## docker compose up
