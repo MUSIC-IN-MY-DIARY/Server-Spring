@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  spring_container_service:
+    image: cseeeee/mimd:latest
+    container_name: music_in_my_diary_spring
+    ports:
+      - "8080:8080"
