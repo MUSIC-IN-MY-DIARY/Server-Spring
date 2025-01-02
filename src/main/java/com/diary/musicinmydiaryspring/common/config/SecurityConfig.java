@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(getWhiteListUris()).permitAll()
+                        .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterAt(loginFilter, UsernamePasswordAuthenticationFilter.class)
@@ -77,7 +77,7 @@ public class SecurityConfig {
         return source;
     }
 
-    private String[] getWhiteListUris() {
-        return new String[]{"/swagger-ui/**", "/v3/**", "/api/login", "/swagger-ui.html", "/swagger-resources/**", "/api/member/signup"};
-    }
+//    private String[] getWhiteListUris() {
+//        return new String[]{"/swagger-ui/**", "/v3/**", "/api/login", "/swagger-ui.html", "/swagger-resources/**", "/api/member/signup"};
+//    }
 }
