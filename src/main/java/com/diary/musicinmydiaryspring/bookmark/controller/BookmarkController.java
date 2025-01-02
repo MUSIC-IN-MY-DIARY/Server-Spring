@@ -12,7 +12,7 @@ import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/bookmark")
+@RequestMapping("/api/bookmark")
 public class BookmarkController {
 
     private final BookmarkService bookmarkService;

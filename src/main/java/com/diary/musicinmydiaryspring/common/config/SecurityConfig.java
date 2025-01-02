@@ -31,18 +31,24 @@ public class SecurityConfig {
     private final MemberService memberService;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws
+    public LoginFilter loginFilter(AuthenticationManager authenticationManager) {
+        LoginFilter loginFilter = new LoginFilter(authenticationManager, jwtService, memberService);
+        loginFilter.setFilterProcessesUrl("/api/login");
+        return loginFilter;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http, LoginFilter loginFilter) throws
             Exception{
             return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(((auth)-> auth.disable()))
-                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(getWhiteListUris()).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterAt(
-                        new LoginFilter(authenticationManager(authenticationConfiguration), jwtService, memberService),
+                        loginFilter,
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -56,7 +62,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        configuration.setExposedHeaders(Arrays.asList("X-Forwarded-Proto"));
+//        configuration.setExposedHeaders(Arrays.asList("X-Forwarded-Proto"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -71,6 +77,6 @@ public class SecurityConfig {
     }
 
     private String[] getWhiteListUris() {
-        return new String[]{"/swagger-ui/**", "/v3/**", "/login", "/swagger-ui.html", "/swagger-resources/**", "/member/signup"};
+        return new String[]{"/swagger-ui/**", "/v3/**", "/api/login", "/swagger-ui.html", "/swagger-resources/**", "/api/member/signup"};
     }
 }
