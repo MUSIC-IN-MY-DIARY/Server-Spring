@@ -22,7 +22,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -31,6 +30,7 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final JwtService jwtService;
     private final MemberService memberService;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -38,25 +38,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager() throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
-    public LoginFilter loginFilter(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         LoginFilter loginFilter = new LoginFilter(
-            authenticationManager(authenticationConfiguration),
-            jwtService,
-            memberService
+                authenticationManager(),
+                jwtService,
+                memberService
         );
         loginFilter.setFilterProcessesUrl("/api/login");
-        return loginFilter;
-    }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        LoginFilter loginFilter = loginFilter(authenticationConfiguration);
-        
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
