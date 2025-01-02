@@ -38,14 +38,25 @@ public class SecurityConfig {
     }
 
     @Bean
-    public LoginFilter loginFilter(AuthenticationManager authenticationManager) {
-        LoginFilter loginFilter = new LoginFilter(authenticationManager, jwtService, memberService);
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public LoginFilter loginFilter(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        LoginFilter loginFilter = new LoginFilter(
+            authenticationManager(authenticationConfiguration),
+            jwtService,
+            memberService
+        );
         loginFilter.setFilterProcessesUrl("/api/login");
         return loginFilter;
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, LoginFilter loginFilter) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        LoginFilter loginFilter = loginFilter(authenticationConfiguration);
+        
         return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
@@ -57,11 +68,6 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
