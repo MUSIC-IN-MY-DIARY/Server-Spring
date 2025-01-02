@@ -31,7 +31,8 @@ public class SecurityConfig {
     private final MemberService memberService;
 
     @Bean
-    public LoginFilter loginFilter(AuthenticationManager authenticationManager) {
+    public LoginFilter loginFilter() throws Exception {
+        AuthenticationManager authenticationManager = authenticationManager(authenticationConfiguration);
         LoginFilter loginFilter = new LoginFilter(authenticationManager, jwtService, memberService);
         loginFilter.setFilterProcessesUrl("/api/login");
         return loginFilter;
@@ -48,7 +49,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterAt(
-                        loginFilter,
+                        loginFilter(),
                         UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
