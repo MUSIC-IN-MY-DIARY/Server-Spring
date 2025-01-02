@@ -36,6 +36,7 @@ public class SecurityConfig {
             return http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(((auth)-> auth.disable()))
+                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(getWhiteListUris()).permitAll()
                         .anyRequest().authenticated()
@@ -55,6 +56,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
+        configuration.setExposedHeaders(Arrays.asList("X-Forwarded-Proto"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
