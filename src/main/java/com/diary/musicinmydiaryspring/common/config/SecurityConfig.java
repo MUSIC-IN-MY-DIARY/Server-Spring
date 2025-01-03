@@ -6,7 +6,6 @@ import com.diary.musicinmydiaryspring.common.filter.JwtAuthenticationFilter;
 import com.diary.musicinmydiaryspring.member.service.MemberService;
 import com.diary.musicinmydiaryspring.member.service.CustomMemberDetailService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,7 +24,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-@Slf4j
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -57,15 +55,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        log.info("Configuring SecurityFilterChain");
-        
         LoginFilter loginFilter = new LoginFilter(
                 authenticationManager(),
                 jwtService,
                 memberService
         );
         loginFilter.setFilterProcessesUrl("/api/v1/login");
-        log.info("LoginFilter configured with URL: /api/v1/login");
 
         return http
                 .authenticationProvider(authenticationProvider())
