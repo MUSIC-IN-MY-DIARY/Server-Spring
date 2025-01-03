@@ -5,9 +5,9 @@ networks:
     name: mimd-network
 
 services:
-  spring_container_service:
+  spring-app:
     image: cseeeee/mimd:latest
-    container_name: music_in_my_diary_spring
+    container_name: spring-app
     ports:
       - '8080:8080'
     networks:

@@ -40,8 +40,8 @@ public class ChatService {
     private final SongRepository songRepository;
 
 
-    private static final String RECOMMEND_URL = "http://127.0.0.1:8000/api/v2/recommend";
-    private static final String LYRICS_URL = "http://127.0.0.1:8000/api/v2/generate";
+    private static final String RECOMMEND_URL = "http://project-app:8000/api/v2/recommend";
+    private static final String LYRICS_URL = "http://project-app:8000/api/v2/generate";
     private final SongService songService;
     private final BookmarkRepository bookmarkRepository;
 
