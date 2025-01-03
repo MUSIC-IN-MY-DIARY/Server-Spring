@@ -18,7 +18,7 @@ import java.security.Principal;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/diary")
+@RequestMapping("/api/v1/diary")
 public class DiaryController {
     private final DiaryService diaryService;
 

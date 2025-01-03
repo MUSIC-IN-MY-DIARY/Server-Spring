@@ -60,7 +60,7 @@ public class SecurityConfig {
                 jwtService,
                 memberService
         );
-        loginFilter.setFilterProcessesUrl("/api/login");
+        loginFilter.setFilterProcessesUrl("/api/v1/login");
 
         return http
                 .authenticationProvider(authenticationProvider())
@@ -90,6 +90,13 @@ public class SecurityConfig {
     }
 
     private String[] getWhiteListUris() {
-        return new String[]{"/swagger-ui/**", "/v3/**", "/api/login", "/swagger-ui.html", "/swagger-resources/**", "/api/member/signup"};
+        return new String[]{
+            "/swagger-ui/**", 
+            "/v3/**", 
+            "/api/v1/login",
+            "/swagger-ui.html", 
+            "/swagger-resources/**", 
+            "/api/v1/member/signup"
+        };
     }
 }
