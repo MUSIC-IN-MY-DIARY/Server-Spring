@@ -26,7 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     private final String[] whiteListUris = new String[]{
-            "/swagger-ui/**", "/v3/**", "/api/login", "/swagger-ui.html", "/swagger-resources/**", "/api/member/signup"
+            "/swagger-ui/**", "/v3/**", "/api/v1/login", "/swagger-ui.html", "/swagger-resources/**", "/api/v1/member/signup"
     };
     /**
      * 필터 처리 메서드 - 요청의 Authorization 헤더를 통해 JWT를 검증하고, SecurityContextHolder에 인증 객체를 설정
