@@ -16,18 +16,18 @@ public class RestClientConfig {
 
     private static final int CONNECT_TIMEOUT = 10000; // 연결 타임아웃
     private static final int BASE_READ_TIMEOUT = 9000; // 기본 읽기 타임아웃
-    private static final int MAX_READ_TIMEOUT = 30000; // 최대 읽기 타임아웃
-    private static final int LENGTH_FACTOR = 100; // 요청 길이에 따른 증가량 (ms)
+//    private static final int MAX_READ_TIMEOUT = 30000; // 최대 읽기 타임아웃
+//    private static final int LENGTH_FACTOR = 100; // 요청 길이에 따른 증가량 (ms)
 
     @Bean
     public RestTemplate restTemplate() {
         return createRestTemplate(BASE_READ_TIMEOUT);
     }
 
-    public RestTemplate restTemplateForRequest(String request) {
-        int dynamicReadTimeout = calculateDynamicTimeout(request);
-        return createRestTemplate(dynamicReadTimeout);
-    }
+//    public RestTemplate restTemplateForRequest(String request) {
+//        int dynamicReadTimeout = calculateDynamicTimeout(request);
+//        return createRestTemplate(dynamicReadTimeout);
+//    }
 
     private RestTemplate createRestTemplate(int readTimeout) {
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
@@ -47,10 +47,10 @@ public class RestClientConfig {
                 .build();
     }
 
-    private int calculateDynamicTimeout(String request) {
-        int additionalTimeout = request.length() * LENGTH_FACTOR;
-        return Math.min(BASE_READ_TIMEOUT + additionalTimeout, MAX_READ_TIMEOUT);
-    }
+//    private int calculateDynamicTimeout(String request) {
+//        int additionalTimeout = request.length() * LENGTH_FACTOR;
+//        return Math.min(BASE_READ_TIMEOUT + additionalTimeout, MAX_READ_TIMEOUT);
+//    }
 
     @Bean
     public RestClient restClient(RestTemplate restTemplate) {
